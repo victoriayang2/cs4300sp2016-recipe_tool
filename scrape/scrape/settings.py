@@ -14,6 +14,8 @@ BOT_NAME = 'scrape'
 SPIDER_MODULES = ['scrape.spiders']
 NEWSPIDER_MODULE = 'scrape.spiders'
 
+LOG_LEVEL='INFO'
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scrape (+http://www.yourdomain.com)'
@@ -53,6 +55,9 @@ SPIDER_MIDDLEWARES = {
 #    'scrape.middlewares.MyCustomDownloaderMiddleware': 543,
 #}
 
+RETRY_ENABLED=True
+RETRY_TIMES=5
+
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
@@ -61,9 +66,9 @@ SPIDER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'scrape.pipelines.SomePipeline': 300,
-#}
+ITEM_PIPELINES = {
+    'scrape.pipelines.JsonWriterPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

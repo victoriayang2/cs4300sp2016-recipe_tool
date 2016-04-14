@@ -1,10 +1,11 @@
-import scrapy
-from scrape.items import ScrapeItem
+import json, math, scrapy
+from collections import defaultdict
+from scrape.items import ScrapeItem, ReviewItem
 
 class ScrapeSpider(scrapy.Spider):
     name = "allrecipes"
     allowed_domains = ["allrecipes.com"]
-    base_url = "http://allrecipes.com/recipes"
+    base_url = "http://allrecipes.com"
     start_urls = [
         "http://allrecipes.com/recipes/76/appetizers-and-snacks/",
         "http://allrecipes.com/recipes/78/breakfast-and-brunch/",
@@ -13,12 +14,13 @@ class ScrapeSpider(scrapy.Spider):
         "http://allrecipes.com/recipes/79/desserts/"
     ]
     known_ids = set()
+    reviewers = defaultdict(list)
 
     # time: String - e.g. 1 h 25 m
     # output: int - 85
-    def get_minutes(time):
+    def get_minutes(self, time):
         acc = 0
-        x = time.replace(' ', '').split('d')
+        x = time.split('d')
         y = x[0]
         if len(x) > 1:
             acc += int(x[0]) * 1440
@@ -46,54 +48,81 @@ class ScrapeSpider(scrapy.Spider):
     def get_recipes(self, response):
         all_recipes = response.xpath('.//article[@class="grid-col--fixed-tiles"]')
         for sel in all_recipes:
-            recipe_link = sel.xpath('./a[1]/@href').extract()[0].split('?')[0]
-            recipe = ScrapeItem()
-            recipe['id'] = recipe_link.split('/')[-3]
-            recipe['tag'] = recipe_link.split('/')[-2]
-            if not recipe['id'] in known_ids:
-                known_ids.add(recipe['id'])
-                yield scrapy.Request(base_url + recipe_link, self.parse_recipe, meta={'recipe': recipe})
+            recipe_link = sel.xpath('./a[1]/@href').extract()
+            recipe_link = recipe_link[0].split('?')[0] if recipe_link else ""
+            if not recipe_link == "":
+                recipe = ScrapeItem()
+                recipe['code'] = recipe_link.split('/')[-3]
+                recipe['tag'] = recipe_link.split('/')[-2]
+                if not recipe['code'] in self.known_ids:
+                    self.known_ids.add(recipe['code'])
+                    yield scrapy.Request(self.base_url + recipe_link, self.parse_recipe, meta={'recipe': recipe})
 
     def parse_recipe(self, response):
         recipe = response.meta['recipe']
-        recipe['name'] = response.xpath('//h1[@itemprop="name"]/text()').extract()[0]
-        recipe['desc'] = response.xpath('//div[@class="submitter"]/div[@itemprop="description"]/text()').extract()[0].replace('\n','').strip()
+        name = response.xpath('//h1[@itemprop="name"]/text()').extract()
+        recipe['name'] = name[0] if name else ""
+        recipe['desc'] = response.xpath('//div[@class="submitter"]/div[@itemprop="description"]/text()').extract_first(default='').replace('\n','').strip()
         # Get time, servings, calories
         header = response.xpath('.//span[@class="recipe-ingredients__header__toggles"]')
-        time_raw = header.xpath('./span[@class=ready-in-time]/text()').extract()[0]
-        recipe['time'] = get_minutes(time_raw)
-        recipe['servings'] = int(header.xpath('./meta[@itemprop="recipeYield"]/@content').extract()[0])
-        recipe['calories'] = int(header.xpath('.//span[@class="calorie-count"]/span[1]/text()').extract()[0])
+        time_raw = header.xpath('./span[@class="ready-in-time__container"]/span[@class="ready-in-time"]/text()').extract_first(default='').replace(' ', '')
+        recipe['time'] = self.get_minutes(time_raw) if time_raw else -1
+        recipe['servings'] = int(header.xpath('./meta[@itemprop="recipeYield"]/@content').extract_first(default=-1))
+        recipe['calories'] = int(header.xpath('.//span[@class="calorie-count"]/span[1]/text()').extract_first(default=-1))
         recipe['ing'] = []
         all_ings = response.xpath('//span[@itemprop="ingredients"]')
         for sel in all_ings:
-            recipe['ing'].append(sel.xpath('./text()').extract()[0])
+            temp = sel.xpath('./text()').extract_first(default='')
+            if temp:
+                recipe['ing'].append(temp)
         # Get instructions
         recipe['steps'] = response.xpath('//ol[@itemprop="recipeInstructions"]/li[@class="step"]/span/text()').extract()
-        recipe['tips'] = response.xpath('//section[@class="recipe-footnotes"]/ul[1]/li[@class!="recipe-footnotes__header"]/text()').extract()
+        tips = response.xpath('//section[@class="recipe-footnotes"]/ul[1]/li/text()').extract()
+        recipe['tips'] = tips if tips else []
         # Get social
-        recipe['rating'] = float(response.xpath('//span[@class="aggregateRating"]/meta[@itemprop="ratingValue"]/@content').extract()[0])
-        recipe['num_made'] = int(response.xpath('//span[@class="made-it-count ng_binding"]/text()').extract()[0])
-        recipe['num_reviews'] = int(response.xpath('//span[@class="review-count"]/text()').extract()[0])
+        recipe['rating'] = float(response.xpath('//span[@itemprop="aggregateRating"]/meta[@itemprop="ratingValue"]/@content').extract_first(default=-1))
+        recipe['num_reviews'] = int(response.xpath('//span[@class="recipe-reviews__header--count"]/text()').extract_first(default=-1))
         recipe['reviews'] = []
-        if recipe['num_reviews'] > 20:
-            #take batches of 200
-        else:
-            #get the 20 shown on the first page
-            # all_reviews = response.xpath('//div[@class="reviews-list"]//div[@itemprop="review"]')
-            # for sel in all_reviews:
-            #     review = {}
-            #     review['rating'] = sel.xpath('.//meta[@itemprop="ratingValue"]/@content').extract()[0]
-            #     review['author'] = sel.xpath('.//meta[@itemprop="author"]/@content').extract()[0]
-            #     review['text'] = sel.xpath('.//div[@class="text-line"]/text()').extract()[0].strip('\n').strip()
-            #     recipe['reviews'].append(review)
+        base_review_link = "http://allrecipes.com/recipe/getreviews/?recipeid=" + str(recipe['code']) + "&pagenumber=1"
+        if recipe['num_reviews'] > 0:
+            #for i in range(1, int(math.ceil(recipe['num_reviews']/float(200))) + 1):
+            recipe = scrapy.Request(base_review_link + "&pagesize=1000&recipeType=Recipe&sortBy=MostHelpful",
+                                    self.parse_reviews,
+                                    meta={'recipe':recipe})
         yield recipe
 
-    def parse_external(self, response):
+    def parse_reviews(self, response):
     	recipe = response.meta['recipe']
-    	source = response.xpath('//iframe/@src').extract()[0]
-    	recipe = scrapy.Request(source, callback=self.parse_iframe, meta={'recipe': recipe})
-    	return recipe
+        # Use this to request the full review text
+        read_more_link = "http://allrecipes.com/recipe/"+recipe['code']+"/"+recipe['tag']+"/reviews/"
+    	all_reviews = response.xpath('//div[@itemprop="review"]')
+        recipe['reviews'] = []
+        for sel in all_reviews:
+            review = ReviewItem()
+            reviewer = sel.xpath('.//div[@class="recipe-details-cook-stats-container"]/a/@href').extract()
+            reviewer = reviewer[0].split('/')[-2] if reviewer else ""
+            review['reviewer'] = reviewer
+            self.reviewers[review['reviewer']].append(recipe['code']) #lol
+            rating = sel.xpath('.//div[@class="rating-stars"]/@data-ratingstars').extract()
+            review['rating'] = int(rating[0]) if rating else -1
+            text = sel.xpath('.//p[@itemprop="reviewBody"]/text()').extract()
+            text = text[0] if text else ""
+            #if "..." in text:
+            #    href = sel.xpath('.//div[@class="review-detail"]/a/@href').extract()
+            #    href = href[0].split('/')[-2] if href else ""
+            #    if not href == "":
+            #        recipe = scrapy.Request(read_more_link + href, self.get_full_review, meta={'review':review, 'recipe':recipe})
+            #else:
+            review['text'] = text.replace('\n', '').strip()
+            recipe['reviews'].append(dict(review))
+        return recipe
+
+    def get_full_review(self, response):
+        recipe = response.meta['recipe']
+        review = response.meta['review']
+        review['text'] = response.xpath('//p[@itemprop="reviewBody"]/text()').extract_first(default="").replace('\n','').strip()
+        recipe['reviews'].append(review)
+        return recipe
 
 #filename = './data/' + response.url.split("/")[-1] + '.html'
 #with open(filename, 'wb') as f:

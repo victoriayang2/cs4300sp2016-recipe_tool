@@ -10,7 +10,8 @@ import scrapy
 
 class ScrapeItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
+    code = scrapy.Field()
+    tag = scrapy.Field()
     name = scrapy.Field()
     desc = scrapy.Field()
     time = scrapy.Field()
@@ -20,6 +21,10 @@ class ScrapeItem(scrapy.Item):
     steps = scrapy.Field()
     tips = scrapy.Field()
     rating = scrapy.Field()
-    num_made = scrapy.Field()
     num_reviews = scrapy.Field()
     reviews = scrapy.Field()
+
+class ReviewItem(scrapy.Item):
+    reviewer = scrapy.Field()
+    rating = scrapy.Field()
+    text = scrapy.Field()
