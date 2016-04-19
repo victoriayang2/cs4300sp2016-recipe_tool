@@ -27,3 +27,13 @@ class JsonWriterPipeline(object):
     	reviewers.write(json.dumps(spider.reviewers))
     	reviewers.close()
     	self.file.close()
+        if len(spider.bad_recipes) > 0:
+            failed_urls = open("/Volumes/Macintosh HD/Users/danieldouvris/Documents/recipes/retry_recipes.txt", 'ab')
+            for url in spider.bad_recipes:
+                failed_urls.write(url + "\n")
+            failed_urls.close()
+        if len(spider.bad_reviews) > 0:
+            failed_urls = open("/Volumes/Macintosh HD/Users/danieldouvris/Documents/recipes/retry_reviews.txt", 'ab')
+            for url in spider.bad_reviews:
+                failed_urls.write(url + "\n")
+            failed_urls.close()
