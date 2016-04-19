@@ -6,6 +6,7 @@ class ScrapeSpider(scrapy.Spider):
     name = "allrecipes"
     allowed_domains = ["allrecipes.com"]
     base_url = "http://allrecipes.com"
+    #http://allrecipes.com/recipes/?sort=newest&page=800
     start_urls = [
         "http://allrecipes.com/recipes/76/appetizers-and-snacks/",
         "http://allrecipes.com/recipes/78/breakfast-and-brunch/",
@@ -15,6 +16,8 @@ class ScrapeSpider(scrapy.Spider):
     ]
     known_ids = set()
     reviewers = defaultdict(list)
+    bad_recipes = []
+    bad_reviews = []
 
     # time: String - e.g. 1 h 25 m
     # output: int - 85
@@ -41,7 +44,7 @@ class ScrapeSpider(scrapy.Spider):
         return acc
 
     def parse(self, response):
-        for i in range(1,11):
+        for i in range(11,51):
             next_page = response.url + "?page=" + str(i) + "&sorttype=popular"
             yield scrapy.Request(next_page, self.get_recipes)
 
@@ -59,6 +62,10 @@ class ScrapeSpider(scrapy.Spider):
                     yield scrapy.Request(self.base_url + recipe_link, self.parse_recipe, meta={'recipe': recipe})
 
     def parse_recipe(self, response):
+        # Log errors
+        if response.status >= 400:
+            self.logger.warning("Error status at recipe %s", response.url)
+            self.bad_recipes.append(response.url)
         recipe = response.meta['recipe']
         name = response.xpath('//h1[@itemprop="name"]/text()').extract()
         recipe['name'] = name[0] if name else ""
@@ -92,6 +99,10 @@ class ScrapeSpider(scrapy.Spider):
         yield recipe
 
     def parse_reviews(self, response):
+        # Log errors
+        if response.status >= 400:
+            self.logger.warning("Error status at review: %s", response.url)
+            self.bad_reviews.append(response.url)
     	recipe = response.meta['recipe']
         # Use this to request the full review text
         read_more_link = "http://allrecipes.com/recipe/"+recipe['code']+"/"+recipe['tag']+"/reviews/"
