@@ -18,9 +18,8 @@ wnl = WordNetLemmatizer()
 verb_tags = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
 remove_tags = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'CC', 'DT', 'IN', 'RP', 'TO']
 take_tags = ['NNS', 'NN', 'NNP', 'NNPS']
-anomalies = []
 
-path = 'jsons/chunk*.json'   
+path = 'jsons\chunk*.json'   
 files=glob.glob(path)
 for file in files:
     with open(file) as f:
@@ -28,10 +27,12 @@ for file in files:
         for line in f:
             recipes.append(json.loads(line))
     filename = file.split(".")
-    output = open(filename[0] + 'p.' + filename[1], 'w')
+    tag = filename[0].split("chunk")[1]
+    output = open('jsons\parsed' + tag + "." + filename[1], 'w')
     
     ing_raw = [r['ing'] for r in recipes]
     ing_parsed = []
+    anomalies = []
 
     print("PARSING")
     for i,ing_list in enumerate(ing_raw):
@@ -39,8 +40,10 @@ for file in files:
         for j,ing in enumerate(ing_list):
             if not ":" in ing:
                 ing = re.sub("\s+([-])\s+\w+|\d-", "", ing.encode("ascii", "ignore").lower())
-                ing = re.sub("([^a-zA-Z'\-])|\s+(['])|(['])\s+", " ", ing)
+                ing = re.sub("([^a-zA-Z'-])|\s+(['])|(['])\s+", " ", ing)
                 ing = re.sub("\s+([-])|([-])\s+", "", ing)
+                if "half and half" in ing:
+                    ing += " half-and-half"
                 tokens = [wnl.lemmatize(word) for word in nltk.word_tokenize(ing) if not word in units]
                 pos_tags = nltk.pos_tag(tokens)
                 if len(pos_tags) == 1:
@@ -50,7 +53,7 @@ for file in files:
                     diff = 1
                     while diff > 0:
                         before = len(remove_verbs)
-                        remove_verbs = [pair[0] for pair in remove_verbs if (not pair[1] in remove_tags)]
+                        remove_verbs = [pair[0] for pair in remove_verbs if (not pair[1] in remove_tags or pair[0] == "shortening")]
                         diff = before - len(remove_verbs)
                         remove_verbs = nltk.pos_tag(remove_verbs)
                     keep_tags = [pair[0] for pair in remove_verbs]
