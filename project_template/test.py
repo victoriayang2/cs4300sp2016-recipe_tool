@@ -22,3 +22,12 @@ def find_similar(q):
 			result.append(((_edit(q, m)), m))
 
 	return sorted(result, key=lambda tup: tup[0])
+
+def find_recipes(i,r):
+	print i
+	print r
+	#split i and r based on , 
+	# compute the similarity on names using edit distance
+	# compute the resultant of recipes based on intersection of output of recipes from inverted index
+	# use both or have different modules to see which one is better
+	# return the resultant recipe list json that should be parsed

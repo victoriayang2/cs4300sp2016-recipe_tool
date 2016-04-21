@@ -4,16 +4,24 @@ from django.http import HttpResponse
 from .models import Docs
 from django.template import loader
 from .form import QueryForm
-from .test import find_similar
+from .test import find_recipes
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 def index(request):
     output_list = ''
     output=''
-    if request.GET.get('search'):
-        search = request.GET.get('search')
-        output_list = find_similar(search)
+    ingredients = ''
+    similar_recipes = ''
+
+    if request.GET.get('ingredients'):        
+        ingredients = request.GET.get('ingredients')
+    if request.GET.get('similar_recipe'):
+        similar_recipes = request.GET.get('similar_recipe')
+    if ingredients or similar_recipes:
+        #find_recipes should be implemented in test.py 
+        # make use of inverted index 
+        output_list = find_recipes(ingredients,similar_recipes)        
         paginator = Paginator(output_list, 10)
         page = request.GET.get('page')
         try:
@@ -22,7 +30,7 @@ def index(request):
             output = paginator.page(1)
         except EmptyPage:
             output = paginator.page(paginator.num_pages)
-    return render_to_response('project_template/index.html', 
+        return render_to_response('project_template/index.html', 
                           {'output': output,
                            'magic_url': request.get_full_path(),
                            })
