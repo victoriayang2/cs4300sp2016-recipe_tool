@@ -15,7 +15,7 @@ recipes = []
 #         recipes.append(r)
 
 
-path = '../jsons/parsed*.json'   
+path = '/static/jsons/parsed*.json'   
 files=glob.glob(path)   
 for file in files: 
     with open(file) as f:
