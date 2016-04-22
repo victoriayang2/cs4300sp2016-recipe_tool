@@ -4,7 +4,7 @@ import Levenshtein
 import json
 import numpy as np
 import pickle
-from .similarity import index_search
+from .similarity
 
 # Some of the recipe names contain non-unicode characters which throw errors 
 # so must be checked before applying edit distance
