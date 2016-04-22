@@ -1,4 +1,5 @@
 from models import Docs
+from similarity import *
 import os
 import Levenshtein
 import json
@@ -25,14 +26,41 @@ def _edit(query, msg):
         
     return Levenshtein.distance(query, msg)
 
-# Returns list of tuples (edit_distance,recipe) ordered by edit distance
-def find_similar(q):
-    transcripts = read_file(1)
+# Returns list of tuples (edit_distance,recipe) ordered by edit distance from input recipes
+def find_similar(q,transcripts):
     result = []
     for transcript in transcripts:
         m = transcript['name']
         result.append(((_edit(q, m)), transcript))
     return sorted(result, key=lambda tup: tup[0])
+
+# Returns list of tuples (cosine_similarty, recipe) ordered by cosine_similarity from input ingredients
+def index_search(query, index, idf, norms, recipes):
+    results = {}
+    query_toks = query.split(",")
+    norm_q = 0
+    for ing in query_toks:      
+        if ing not in index.keys():
+            continue
+        else:
+            norm_q = norm_q + (idf[ing])**2
+            for doc in index[ing]:              
+                score = idf[ing] * idf[ing]
+                if doc in results.keys():
+                    results[doc] = results[doc] + score
+                else:
+                    results[doc] = score
+    #normalizing
+    for doc in results:
+        results[doc] = results[doc]/(float(norms[doc])*(math.sqrt(norm_q)))
+    #sorting
+    results = sorted(results.items(), key=lambda x: x[1], reverse=True) 
+    results = map (lambda t: (t[1], t[0]), results)
+    new_results = []
+    for (score, doc_id) in results:
+        if score != 0:
+            new_results.append(recipes[doc_id])
+    return new_results
 
 def find_recipes(i,r):
 # takes string of ingredients and/or recipes
@@ -41,25 +69,21 @@ def find_recipes(i,r):
 # return the resultant recipe list json that should be parsed
 
 # if recipe(s) given compute similarity of recipe names using edit distance
+    transcripts = read_file(1)
+
     if r != '':
         rec_list = r.split(",")
-        recipes_r = [r for l in [find_similar(rec) for rec in rec_list] for r in l]
+        recipes_r = [r for l in [find_similar(rec,transcripts) for rec in rec_list] for r in l]
         recipes_r = [r[1] for r in sorted(recipes_r, key=lambda tup: tup[0])]
 
-# if ingredient(s) given compute intersection of output of recipes from inverted index      
+# if ingredient(s) given compute cosine similarity of recipes  
     if i != '':
-        ing_list = i.split(",")
-        rec_ind = []
-        for ing in ing_list:
-            if ing in inverted_index:
-                indices = inverted_index[ing]
-                rec_ind.append(indices)
-        common_indices = set.intersection(*map(set,rec_ind))
-        recipes_i = [transcripts[i] for i in common_indices]
+        recipes_i = index_search(i,inverted_index,idf,norms,transcripts)
 
- # if both recipes and ingredients given, return intersection list of recipes sorted in order of edit distance     
+ # if both recipes and ingredients given, return intersection of lists ordered by cosine similarity     
     if r !='' and i !='':
-        ranked_recipes = [r for r in recipes_r for i in recipes_i if i['code']==r['code']]
+        i_ids = [i['code'] for i in recipes_i]
+        ranked_recipes = [r for r in recipes_r if r['code'] in i_ids]
       
     if r == '':
         ranked_recipes = recipes_i
