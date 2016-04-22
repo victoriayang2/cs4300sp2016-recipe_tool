@@ -4,6 +4,7 @@ import numpy as np
 import json
 import glob
 import math
+import os
 from collections import defaultdict
 
 recipes = []
@@ -14,7 +15,7 @@ recipes = []
 #         r.pop('reviews', None)
 #         recipes.append(r)
 
-
+print os.getcwd()
 path = '../mysite/static/jsons/parsed*.json'   
 files=glob.glob(path)   
 for file in files: 
