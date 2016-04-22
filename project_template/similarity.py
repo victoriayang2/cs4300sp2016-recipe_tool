@@ -1,7 +1,8 @@
 from __future__ import print_function
 import numpy as np
 import json
-import glob 
+import glob
+import math
 from collections import defaultdict
 
 recipes = []
@@ -15,7 +16,7 @@ for file in files:
             recipes.append(r)
 
 # Sort recipes by name
-recipes = sorted(recipes, key=lambda r: r['name'])
+recipes.sort(key=lambda r:r['name'])
 
 # Dictionary of recipe name to recipe ingredients
 recipe_ingredients = {}
