@@ -16,7 +16,6 @@ recipes = []
 #         r.pop('reviews', None)
 #         recipes.append(r)
 
-print settings.STATIC_ROOT
 path = os.path.join(settings.PROJECT_ROOT, '/static/jsons/parsed*.json')
 files=glob.glob(path)   
 for file in files: 
