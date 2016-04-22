@@ -6,15 +6,6 @@ import numpy as np
 import pickle
 from .similarity import index_search
 
-with open('recipes.pickle','rb') as f:
-        recipes = pickle.load(f)
-with open('inverted_index.pickle','rb') as f:
-        inverted_index = pickle.load(f)
-with open('norms.pickle','rb') as f:
-        norms = pickle.load(f)
-with open('idf.pickle','rb') as f:
-        idf = pickle.load(f)
-
 # Some of the recipe names contain non-unicode characters which throw errors 
 # so must be checked before applying edit distance
 def _edit(query, msg):

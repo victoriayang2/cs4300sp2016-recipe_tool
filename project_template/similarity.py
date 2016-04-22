@@ -1,5 +1,5 @@
 from __future__ import print_function
-#from .models import Chunks
+from .models import Chunks
 import numpy as np
 import json
 import glob
@@ -7,24 +7,24 @@ import math
 import pickle
 from collections import defaultdict
 
-NUM_CHUNKS = 19
+NUM_CHUNKS = 5
 recipes = []
-# for i in range(1,NUM_CHUNKS+1):
-#     path = Chunks.objects.get(id = i).address;
-#     with open(path) as f:
-#         for line in f:
-#             r = json.loads(line)
-#             r.pop('reviews', None)
-#             recipes.append(r)
-
-path = 'jsons/parsed*.json'
-files=glob.glob(path)
-for file in files:
-    with open(file) as f:
+for i in range(1,NUM_CHUNKS+1):
+    path = Chunks.objects.get(id = i).address;
+    with open(path) as f:
         for line in f:
             r = json.loads(line)
             r.pop('reviews', None)
             recipes.append(r)
+
+# path = 'jsons/parsed*.json'
+# files=glob.glob(path)
+# for file in files:
+#     with open(file) as f:
+#         for line in f:
+#             r = json.loads(line)
+#             r.pop('reviews', None)
+#             recipes.append(r)
 
 # Sort recipes by name
 recipes.sort(key=lambda r:r['name'])
@@ -63,15 +63,6 @@ for i in range(len(recipes)):
             if i == doc:
                 norm = norm + (idf[ing])**2
     norms[i] = math.sqrt(norm)
-
-with open('recipes.pickle', 'wb') as f:
-    pickle.dump(recipes, f)
-with open('inverted_index.pickle', 'wb') as f:
-    pickle.dump(inverted_index, f)
-with open('norms.pickle', 'wb') as f:
-    pickle.dump(norms, f)
-with open('idf.pickle', 'wb') as f:
-    pickle.dump(idf, f)
 
 #performs a search based on cosine similarity
 def index_search(query, index, idf, norms, recipes):
