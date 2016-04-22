@@ -72,6 +72,9 @@ def index_search(query, index, idf, norms, recipes):
     results = map (lambda t: (t[1], t[0]), results)
     new_results = []
     for (score, doc_id) in results:
-        new_results.append(recipes[doc_id])
+        if score == 0: 
+            continue
+        else:
+            new_results.append(recipes[doc_id])
     
     return new_results
