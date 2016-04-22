@@ -1,28 +1,30 @@
 from __future__ import print_function
-from models import Docs
+from .models import Chunks
 import numpy as np
 import json
 import glob
 import math
+import pickle
 from collections import defaultdict
 
+NUM_CHUNKS = 5
 recipes = []
-# path = Docs.objects.get(id = 2).address;
-# with open(path) as f:
-#     for line in f:
-#         r = json.loads(line)
-#         r.pop('reviews', None)
-#         recipes.append(r)
-
-
-path = '../jsons/parsed*.json'   
-files=glob.glob(path)   
-for file in files: 
-    with open(file) as f:
+for i in range(1,NUM_CHUNKS+1):
+    path = Chunks.objects.get(id = i).address;
+    with open(path) as f:
         for line in f:
             r = json.loads(line)
             r.pop('reviews', None)
             recipes.append(r)
+
+# path = 'jsons/parsed*.json'
+# files=glob.glob(path)
+# for file in files:
+#     with open(file) as f:
+#         for line in f:
+#             r = json.loads(line)
+#             r.pop('reviews', None)
+#             recipes.append(r)
 
 # Sort recipes by name
 recipes.sort(key=lambda r:r['name'])
@@ -84,9 +86,7 @@ def index_search(query, index, idf, norms, recipes):
     results = map (lambda t: (t[1], t[0]), results)
     new_results = []
     for (score, doc_id) in results:
-        if score == 0: 
-            continue
-        else:
+        if score > 0:
             new_results.append(recipes[doc_id])
-    
+            
     return new_results

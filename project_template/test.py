@@ -6,10 +6,10 @@ from .similarity import *
 
 
 def read_file(n):
-	path = Docs.objects.get(id = n).address;
-	file = open(path)
-	transcripts = json.load(file)
-	return transcripts
+    path = Docs.objects.get(id = n).address;
+    file = open(path)
+    transcripts = json.load(file)
+    return transcripts
 
 # Some of the recipe names contain non-unicode characters which throw errors 
 # so must be checked before applying edit distance
@@ -81,9 +81,9 @@ def find_recipes(i,r):
         recipes_i = index_search(i,inverted_index,idf,norms,transcripts)
      
     if r !='' and i !='':
-        #i_ids = [i['code'] for i in recipes_i]
-        #ranked_recipes = [r for r in recipes_r if r['code'] in i_ids]
-        ranked_recipes = recipes_i
+        r_ids = [i['code'] for i in recipes_i]
+        intersect = [r['code'] for r in recipes_r[:500] if r['code'] in r_ids]
+        ranked_recipes = [j for j in recipes_i if j['code'] in intersect]
       
     if r == '':
         ranked_recipes = recipes_i

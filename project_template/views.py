@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
-from .models import Docs
+from .models import Chunks
 from django.template import loader
 from .form import QueryForm
 from .test import find_recipes
@@ -16,12 +16,13 @@ def index(request):
 
     if request.GET.get('ingredients'):        
         ingredients = request.GET.get('ingredients')
+        print ingredients
     if request.GET.get('similar_recipe'):
         similar_recipes = request.GET.get('similar_recipe')
     if ingredients or similar_recipes:
         #find_recipes should be implemented in test.py 
         # make use of inverted index 
-        output_list = find_recipes(ingredients,similar_recipes)        
+        output_list = find_recipes(ingredients,similar_recipes)
         paginator = Paginator(output_list, 10)
         page = request.GET.get('page')
         try:

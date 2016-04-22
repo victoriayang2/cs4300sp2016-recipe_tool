@@ -23,16 +23,16 @@
             <br><br>
             
             <div class="form-group">
-                <input id="input" type="text" name="similar_recipe" class="form-control" placeholder="Similar Recipe name(s) - CSV"><br/>
-                <input id="input" type="text" name="ingredients" class="form-control" placeholder="Your Ingredient List (CSV formatted)">
+                <input id="input" type="text" name="similar_recipe" class="form-control" placeholder="Similar Recipes (comma separated)"><br/>
+                <input id="input" type="text" name="ingredients" class="form-control" placeholder="Your Ingredient List (comma separated)">
             </div>
-            <button color='#182300' type="submit" class="btn btn-info"> Go! </button>
+            <button style='background-color:#446500' type="submit" class="btn btn-info"> Go! </button>
         </form>
         
         <div class="form-inline global-search">
             <h4>Output</h4><br>
             {% for line in output %}
-                {{line.name}}<br>
+                <a target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a><br>
                 {{line.rating}}<br>
             {% endfor %}
             
