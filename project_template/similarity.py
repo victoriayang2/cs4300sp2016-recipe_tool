@@ -70,6 +70,8 @@ with open('inverted_index.pickle', 'wb') as f:
     pickle.dump(inverted_index, f)
 with open('norms.pickle', 'wb') as f:
     pickle.dump(norms, f)
+with open('idf.pickle', 'wb') as f:
+    pickle.dump(idf, f)
 
 #performs a search based on cosine similarity
 def index_search(query, index, idf, norms, recipes):
