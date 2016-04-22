@@ -34,7 +34,7 @@ def find_similar(q):
         result.append(((_edit(q, m)), transcript))
     return sorted(result, key=lambda tup: tup[0])
 
-def find_recipes(i,r):
+def find_recipes(i,r=''):
 # takes string of ingredients and/or recipes
 
 # use both or have different modules to see which one is better
