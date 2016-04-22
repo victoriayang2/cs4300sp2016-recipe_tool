@@ -1,5 +1,5 @@
 from __future__ import print_function
-from .models import Chunks
+from .models import Docs
 import numpy as np
 import json
 import glob
@@ -7,7 +7,7 @@ import math
 from collections import defaultdict
 
 recipes = []
-path = Chunks.objects.get(id = 1).address;
+path = Docs.objects.get(id = 1).address;
 with open(path) as f:
     for line in f:
         r = json.loads(line)
