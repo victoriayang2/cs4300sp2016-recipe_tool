@@ -13,7 +13,7 @@ for file in files:
             recipes.append(json.loads(line).pop('reviews', None))
 
 # Sort recipes by name
-recipes = sorted(recipes, lambda=r r['name'])
+recipes = sorted(recipes, key=lambda r: r['name'])
 
 # Dictionary of recipe name to recipe ingredients
 recipe_ingredients = {}
