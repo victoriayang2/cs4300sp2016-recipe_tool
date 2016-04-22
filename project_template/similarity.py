@@ -7,22 +7,22 @@ import math
 from collections import defaultdict
 
 recipes = []
-path = Docs.objects.get(id = 1).address;
-with open(path) as f:
-    for line in f:
-        r = json.loads(line)
-        r.pop('reviews', None)
-        recipes.append(r)
+# path = Docs.objects.get(id = 1).address;
+# with open(path) as f:
+#     for line in f:
+#         r = json.loads(line)
+#         r.pop('reviews', None)
+#         recipes.append(r)
 
 
-# path = '../jsons/parsed*.json'   
-# files=glob.glob(path)   
-# for file in files: 
-#     with open(file) as f:
-#         for line in f:
-#             r = json.loads(line)
-#             r.pop('reviews', None)
-#             recipes.append(r)
+path = '../jsons/parsed*.json'   
+files=glob.glob(path)   
+for file in files: 
+    with open(file) as f:
+        for line in f:
+            r = json.loads(line)
+            r.pop('reviews', None)
+            recipes.append(r)
 
 # Sort recipes by name
 recipes.sort(key=lambda r:r['name'])
