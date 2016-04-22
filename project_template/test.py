@@ -36,8 +36,7 @@ def find_similar(q):
     return sorted(result, key=lambda tup: tup[0])
 
 def find_recipes(i,r=''):
-# takes string of ingredients and/or recipes
-
+    # takes string of ingredients and/or recipes
     return index_search(i, inverted_index, idf, norms, recipes)
 
 # use both or have different modules to see which one is better
