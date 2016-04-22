@@ -3,7 +3,61 @@
     "model": "project_template.Docs",
     "pk": 1,
     "fields": {
-      "address": "jsons/kardashian-transcripts.json"
+      "address": "jsons/parsed1.json"
+    }
+  }, {
+    "model": "project_template.Docs",
+    "pk": 2,
+    "fields": {
+      "address": "jsons/parsed2.json"
+    }
+  }, {
+    "model": "project_template.Docs",
+    "pk": 3,
+    "fields": {
+      "address": "jsons/parsed3.json"
+    }
+  }, {
+    "model": "project_template.Docs",
+    "pk": 4,
+    "fields": {
+      "address": "jsons/parsed4.json"
+    }
+  }, {
+    "model": "project_template.Docs",
+    "pk": 5,
+    "fields": {
+      "address": "jsons/parsed5.json"
+    }
+  }, {
+    "model": "project_template.Docs",
+    "pk": 6,
+    "fields": {
+      "address": "jsons/parsed6.json"
+    }
+  }, {
+    "model": "project_template.Docs",
+    "pk": 7,
+    "fields": {
+      "address": "jsons/parsed7.json"
+    }
+  }, {
+    "model": "project_template.Docs",
+    "pk": 8,
+    "fields": {
+      "address": "jsons/parsed8.json"
+    }
+  }, {
+    "model": "project_template.Docs",
+    "pk": 9,
+    "fields": {
+      "address": "jsons/parsed9.json"
+    }
+  }, {
+    "model": "project_template.Docs",
+    "pk": 10,
+    "fields": {
+      "address": "jsons/parsed10.json"
     }
   }
 ]

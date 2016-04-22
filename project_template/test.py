@@ -1,8 +1,8 @@
 from models import Docs
-from similarity import *
 import os
 import Levenshtein
 import json
+from .similarity import *
 
 
 def read_file(n):
@@ -79,8 +79,7 @@ def find_recipes(i,r):
 # if ingredient(s) given compute cosine similarity of recipes  
     if i != '':
         recipes_i = index_search(i,inverted_index,idf,norms,transcripts)
-
- # if both recipes and ingredients given, return intersection of lists ordered by cosine similarity     
+     
     if r !='' and i !='':
         i_ids = [i['code'] for i in recipes_i]
         ranked_recipes = [r for r in recipes_r if r['code'] in i_ids]

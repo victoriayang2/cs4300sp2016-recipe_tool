@@ -36,7 +36,8 @@
         <div class="form-inline global-search">
             <h4>Output</h4><br>
             {% for line in output %}
-                {{line}}<br>
+                {{line.name}}<br>
+                {{line.rating}}<br>
             {% endfor %}
             
             <div class="pagination">

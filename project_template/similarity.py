@@ -1,37 +1,52 @@
 from __future__ import print_function
+from models import Docs
 import numpy as np
 import json
-import glob 
-import numpy as np
+import glob
+import math
+from collections import defaultdict
 
 recipes = []
-path = 'jsons/parsed*.json'   
+# path = Docs.objects.get(id = 2).address;
+# with open(path) as f:
+#     for line in f:
+#         r = json.loads(line)
+#         r.pop('reviews', None)
+#         recipes.append(r)
+
+
+path = '../jsons/parsed*.json'   
 files=glob.glob(path)   
 for file in files: 
     with open(file) as f:
         for line in f:
-            recipes.append(json.loads(line))
+            r = json.loads(line)
+            r.pop('reviews', None)
+            recipes.append(r)
 
-#dictionary of recipe name to recipe ingredients
+# Sort recipes by name
+recipes.sort(key=lambda r:r['name'])
+
+# Dictionary of recipe name to recipe ingredients
 recipe_ingredients = {}
+# List of all ingredients
+all_ingredients = []
+
 for recipe in recipes:
     recipe_ingredients[recipe['name']] = recipe['ing']
+    all_ingredients += recipe['ing']
+
+# Remove duplicates and sort ingredients to get indices
+all_ingredients = sorted(set(all_ingredients))
 
 id_to_name = {}
 
 
 #inverted index of ingredient to doc IDs
-inverted_index = {}
-for i in range(len(recipes)):
-    for ing in recipes[i]['ing']:
-        if ing in inverted_index:
-            recipe_indices = [x for x in inverted_index[ing]]
-            if i in recipe_indices:
-                continue
-            else:
-                inverted_index[ing].append(i)
-        else:
-            inverted_index[ing]=[i]
+inverted_index = defaultdict(list)
+for i, rec in enumerate(recipes):
+    for ing in rec['ing']:
+        inverted_index[ing].append(i)
             
 idf = {}
 for ing in inverted_index.keys():
@@ -53,10 +68,8 @@ def index_search(query, index, idf, norms, recipes):
     query_toks = query.split(",")
     norm_q = 0
     for ing in query_toks:      
-        if ing not in index.keys():
-            continue
-        else:
-            norm_q = norm_q + (idf[ing])**2
+        if ing in index.keys():
+            norm_q += (idf[ing])**2
             for doc in index[ing]:              
                 score = idf[ing] * idf[ing]
                 if doc in results.keys():
@@ -71,6 +84,9 @@ def index_search(query, index, idf, norms, recipes):
     results = map (lambda t: (t[1], t[0]), results)
     new_results = []
     for (score, doc_id) in results:
-        new_results.append(recipes[doc_id])
+        if score == 0: 
+            continue
+        else:
+            new_results.append(recipes[doc_id])
     
-    return new_results[0:9]
+    return new_results
