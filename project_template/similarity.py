@@ -5,6 +5,7 @@ import json
 import glob
 import math
 import os
+from django.conf import settings
 from collections import defaultdict
 
 recipes = []
@@ -15,8 +16,8 @@ recipes = []
 #         r.pop('reviews', None)
 #         recipes.append(r)
 
-print os.getcwd()
-path = '../mysite/static/jsons/parsed*.json'   
+print settings.STATIC_ROOT
+path = os.path.join(settings.PROJECT_ROOT, '/static/jsons/parsed*.json')
 files=glob.glob(path)   
 for file in files: 
     with open(file) as f:
