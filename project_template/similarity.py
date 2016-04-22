@@ -1,5 +1,5 @@
 from __future__ import print_function
-from .models import Docs
+from .models import Chunks
 import numpy as np
 import json
 import glob
@@ -9,22 +9,22 @@ from django.conf import settings
 from collections import defaultdict
 
 recipes = []
-# path = Docs.objects.get(id = 1).address;
-# with open(path) as f:
-#     for line in f:
-#         r = json.loads(line)
-#         r.pop('reviews', None)
-#         recipes.append(r)
+path = Chunks.objects.get(id = 1).address;
+with open(path) as f:
+    for line in f:
+        r = json.loads(line)
+        r.pop('reviews', None)
+        recipes.append(r)
 
-path = os.path.join(settings.PROJECT_ROOT, '/static/jsons/parsed*.json')
-print(path)
-files=glob.glob(path)   
-for file in files: 
-    with open(file) as f:
-        for line in f:
-            r = json.loads(line)
-            r.pop('reviews', None)
-            recipes.append(r)
+# path = os.path.join(settings.PROJECT_ROOT, '/static/jsons/parsed*.json')
+# print(path)
+# files=glob.glob(path)   
+# for file in files: 
+#     with open(file) as f:
+#         for line in f:
+#             r = json.loads(line)
+#             r.pop('reviews', None)
+#             recipes.append(r)
 
 # Sort recipes by name
 recipes.sort(key=lambda r:r['name'])
