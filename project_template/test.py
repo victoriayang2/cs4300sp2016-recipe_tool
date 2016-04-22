@@ -81,9 +81,9 @@ def find_recipes(i,r):
         recipes_i = index_search(i,inverted_index,idf,norms,transcripts)
      
     if r !='' and i !='':
-        r_ids = [i['code'] for i in recipes_i]
-        intersect = [r['code'] for r in recipes_r if r['code'] in r_ids]
-        ranked_recipes = [j for j in recipes_i if j['code'] in intersect]
+        #i_ids = [i['code'] for i in recipes_i]
+        #ranked_recipes = [r for r in recipes_r if r['code'] in i_ids]
+        ranked_recipes = recipes_i
       
     if r == '':
         ranked_recipes = recipes_i
