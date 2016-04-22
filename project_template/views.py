@@ -23,7 +23,6 @@ def index(request):
         #find_recipes should be implemented in test.py 
         # make use of inverted index 
         output_list = find_recipes(ingredients,similar_recipes)
-        print output_list[0]
         paginator = Paginator(output_list, 10)
         page = request.GET.get('page')
         try:

@@ -8,13 +8,15 @@ import os
 from django.conf import settings
 from collections import defaultdict
 
+NUM_CHUNKS = 19
 recipes = []
-path = Chunks.objects.get(id = 1).address;
-with open(path) as f:
-    for line in f:
-        r = json.loads(line)
-        r.pop('reviews', None)
-        recipes.append(r)
+for i in range(1,NUM_CHUNKS+1):
+    path = Chunks.objects.get(id = i).address;
+    with open(path) as f:
+        for line in f:
+            r = json.loads(line)
+            r.pop('reviews', None)
+            recipes.append(r)
 
 # path = os.path.join(settings.PROJECT_ROOT, '/static/jsons/parsed*.json')
 # print(path)
