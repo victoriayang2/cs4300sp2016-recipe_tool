@@ -37,6 +37,7 @@ def find_similar(q):
 
 def find_recipes(i,r=''):
     # takes string of ingredients and/or recipes
+    print len(recipes)
     return index_search(i, inverted_index, idf, norms, recipes)
 
 # use both or have different modules to see which one is better
