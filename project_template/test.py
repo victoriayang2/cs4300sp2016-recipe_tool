@@ -1,15 +1,9 @@
-from models import Docs
+from models import Chunks
 import os
 import Levenshtein
 import json
 from .similarity import *
 
-
-def read_file(n):
-	path = Docs.objects.get(id = n).address;
-	file = open(path)
-	transcripts = json.load(file)
-	return transcripts
 
 # Some of the recipe names contain non-unicode characters which throw errors 
 # so must be checked before applying edit distance
