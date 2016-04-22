@@ -7,7 +7,7 @@ import math
 from collections import defaultdict
 
 recipes = []
-path = Docs.objects.get(id = 1).address;
+path = Docs.objects.get(id = 2).address;
 with open(path) as f:
     for line in f:
         r = json.loads(line)
