@@ -5,6 +5,7 @@ from .models import Docs
 from django.template import loader
 from .form import QueryForm
 from .test import find_recipes
+from .similarity import index_search
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
