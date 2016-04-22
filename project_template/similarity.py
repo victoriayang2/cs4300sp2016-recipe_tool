@@ -10,7 +10,9 @@ files=glob.glob(path)
 for file in files: 
     with open(file) as f:
         for line in f:
-            recipes.append(json.loads(line).pop('reviews', None))
+            r = json.loads(line)
+            r.pop('reviews', None)
+            recipes.append(r)
 
 # Sort recipes by name
 recipes = sorted(recipes, key=lambda r: r['name'])
