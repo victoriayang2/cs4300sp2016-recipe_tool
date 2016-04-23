@@ -2,9 +2,14 @@ from models import Chunks
 import os
 import Levenshtein
 import json
-import numpy as np
-import pickle
 from .similarity import *
+
+
+def read_file(n):
+    path = Chunks.objects.get(id = n).address;
+    file = open(path)
+    transcripts = json.load(file)
+    return transcripts
 
 # Some of the recipe names contain non-unicode characters which throw errors 
 # so must be checked before applying edit distance
@@ -37,24 +42,26 @@ def find_recipes(i,r=''):
     # return the resultant recipe list json that should be parsed
 
     # if recipe(s) given compute similarity of recipe names using edit distance
+    # transcripts = read_file(1)
 
     # if r != '':
     #     rec_list = r.split(",")
     #     recipes_r = [r for l in [find_similar(rec,transcripts) for rec in rec_list] for r in l]
     #     recipes_r = [r[1] for r in sorted(recipes_r, key=lambda tup: tup[0])]
 
-    # if ingredient(s) given compute cosine similarity of recipes  
+    # # if ingredient(s) given compute cosine similarity of recipes  
     # if i != '':
     #     recipes_i = index_search(i,inverted_index,idf,norms,transcripts)
      
     # if r !='' and i !='':
-    #     i_ids = [i['code'] for i in recipes_i]
-    #     ranked_recipes = [r for r in recipes_r if r['code'] in i_ids]
+    #     r_ids = [i['code'] for i in recipes_i]
+    #     intersect = [r['code'] for r in recipes_r[:500] if r['code'] in r_ids]
+    #     ranked_recipes = [j for j in recipes_i if j['code'] in intersect]
       
     # if r == '':
     #     ranked_recipes = recipes_i
     
-    # else:
+    # if i =='':
     #     ranked_recipes = recipes_r
    
     return ranked_recipes
