@@ -2,37 +2,47 @@
     <head>
         <link rel="stylesheet" href="/static/bootstrap.min.css">
         <link rel="stylesheet" href="/static/main.css">
-        <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Signika' rel='stylesheet' type='text/css'>
     </head>
+    <script>
+        function showDiv() {
+            localStorage.setItem('show', 'true'); //store state in localStorage
+        }
+        window.onload = function() {
+            var show = localStorage.getItem('show');
+            if(show === 'true'){
+                 document.getElementById('output').style.display = "block";
+            }
+        }
+    </script>
     
     <body>
         <!-- TODO: Please change lines 10 and 11 according to your actual project name and student names-->
         <div class="topcorner">
-            <p>Recipe Recommender <br>
-            Victoria Yang (vzy2) <br>
-            Daniel Douvris (dpd63) <br>
-            Sahana Vijaykumar (sv387) <br>
-            Prava Samad (pts54)</p>
+            <p>
+                Recipe Recommender <br>
+                Victoria Yang (vzy2) | Daniel Douvris (dpd63) | Sahana Vijaykumar (sv387) | Prava Samad (pts54)
+            </p>
         </div>
         
-        <form class="form-inline global-search" method='GET'>
-            <h1 style="font-size: 55px; font-family: 'Roboto', sans-serif; color: #99cc33">
-                Sharp<font color='#446500'>chef</font>
-            </h1>
-            
-            <br><br>
-            
-            <div class="form-group">
-                <input id="input" type="text" name="similar_recipe" class="form-control" placeholder="Similar Recipes (comma separated)"><br/>
-                <input id="input" type="text" name="ingredients" class="form-control" placeholder="Your Ingredient List (comma separated)">
-            </div>
-            <button style='background-color:#446500' type="submit" class="btn btn-info"> Go! </button>
-        </form>
-        
-        <div class="form-inline global-search">
-            <h4>Output</h4><br>
+        <div id='form'>
+            <form class="form-inline global-search" method='GET'>
+                <h1> Sharp<font id='logo'>chef</font></h1>
+                
+                <br><br>
+                
+                <div class="form-group">
+                    <input id="input" type="text" name="similar_recipe" class="form-control" placeholder="Similar Recipes (comma separated)"><br/>
+                    <input id="input" type="text" name="ingredients" class="form-control" placeholder="Your Ingredient List (comma separated)">
+                </div>
+                <button onclick="showDiv();"  type="submit" class="btn btn-info"> GO! </button>
+            </form>
+        </div>
+
+        <div id='output' class="form-inline global-search" style="display:none;">
+            <h3>Output</h3><br>
             {% for line in output %}
-                <a target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a><br>
+                <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a><br>
                 {{line.rating}}<br>
             {% endfor %}
             
@@ -48,7 +58,7 @@
                     </span>
                     
                     {% if output.has_next %}
-                    <a href= "{{magic_url}}&page={{ output.next_page_number }}">next</a>
+                    <a id ='step_links' href= "{{magic_url}}&page={{ output.next_page_number }}">next</a>
                     {% endif %}
                 </span>
             </div>
