@@ -69,7 +69,8 @@ def index_search(query, index, idf, norms, recipes):
     results = {}
     query_toks = query.split(",")
     norm_q = 0
-    for ing in query_toks:      
+    for ing in query_toks:
+        ing = ing.strip()
         if ing in index.keys():
             norm_q += (idf[ing])**2
             for doc in index[ing]:              
