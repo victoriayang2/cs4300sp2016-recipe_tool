@@ -64,10 +64,20 @@ for i in range(len(recipes)):
                 norm = norm + (idf[ing])**2
     norms[i] = math.sqrt(norm)
 
+# with open('./project_template/inverted_index.pickle','rb') as f:
+#     inverted_index = pickle.load(f)
+# with open('./project_template/idf.pickle','rb') as f:
+#     idf = pickle.load(f)
+# with open('./project_template/norms.pickle','rb') as f:
+#     norms = pickle.load(f)
+# with open('./project_template/recipes.pickle','rb') as f:
+#     recipes = pickle.load(f)
+
 #performs a search based on cosine similarity
 def index_search(query, index, idf, norms, recipes):
     results = {}
     query_toks = query.split(",")
+    query_set = set(query_toks)
     norm_q = 0
     for ing in query_toks:
         ing = ing.strip()
@@ -88,6 +98,8 @@ def index_search(query, index, idf, norms, recipes):
     new_results = []
     for (score, doc_id) in results:
         if score > 0:
-            new_results.append(recipes[doc_id])
+            rec = recipes[doc_id]
+            rec['diff'] = set(rec['ing']) - query_set
+            new_results.append(rec)
             
     return new_results

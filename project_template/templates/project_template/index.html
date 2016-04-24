@@ -32,7 +32,6 @@
                 <br><br>
                 
                 <div class="form-group">
-                    <input id="input" type="text" name="similar_recipe" class="form-control" placeholder="Similar Recipes (comma separated)"><br/>
                     <input id="input" type="text" name="ingredients" class="form-control" placeholder="Your Ingredient List (comma separated)">
                 </div>
                 <button onclick="showDiv();"  type="submit" class="btn btn-info"> GO! </button>
@@ -43,7 +42,7 @@
             <h3>Output</h3><br>
             {% for line in output %}
                 <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a><br>
-                {{line.rating}}<br>
+                <p>Need: {{line.diff}}</p><br>
             {% endfor %}
             
             <div class="pagination">
