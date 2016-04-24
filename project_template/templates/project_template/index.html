@@ -38,6 +38,13 @@
             </form>
         </div>
 
+        {% if output == "" %}
+        <script>
+            localStorage.setItem('show', 'false');
+            document.getElementById('output').style.display = "none";
+        </script>
+        {% endif %}
+
         <div id='output' class="form-inline global-search" style="display:none;">
             <h3>Output</h3><br>
             {% for line in output %}
@@ -53,7 +60,7 @@
                     
                     <!-- Showing the page numbers in Html Page -->
                     <span class="current">
-                    Page _{{ output.number }}_ of _{{ output.paginator.num_pages }}_
+                    Page {{ output.number }} of {{ output.paginator.num_pages }}
                     </span>
                     
                     {% if output.has_next %}

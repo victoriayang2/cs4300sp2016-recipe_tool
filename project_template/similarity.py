@@ -76,11 +76,10 @@ for i in range(len(recipes)):
 #performs a search based on cosine similarity
 def index_search(query, index, idf, norms, recipes):
     results = {}
-    query_toks = query.split(",")
+    query_toks = [q.strip() for q in query.split(",")]
     query_set = set(query_toks)
     norm_q = 0
     for ing in query_toks:
-        ing = ing.strip()
         if ing in index.keys():
             norm_q += (idf[ing])**2
             for doc in index[ing]:              
@@ -99,7 +98,7 @@ def index_search(query, index, idf, norms, recipes):
     for (score, doc_id) in results:
         if score > 0:
             rec = recipes[doc_id]
-            rec['diff'] = set(rec['ing']) - query_set
+            rec['diff'] = ", ".join(list(set(rec['ing']) - query_set))
             new_results.append(rec)
             
     return new_results
