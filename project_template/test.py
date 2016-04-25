@@ -36,6 +36,10 @@ def find_similar(q,transcripts):
 
 def find_recipes(i,r=''):
     # takes string of ingredients and/or recipes
-    ranked_recipes = index_search(i, n_ing, ing_by_rec, idf, ing_to_index, norm, recipes)
+    try:
+        query = str(i).lower()
+    except UnicodeEncodeError:
+        query = (i.encode('utf8')).lower()
+    ranked_recipes = index_search(query, n_ing, ing_by_rec, idf, ing_to_index, norm, recipes)
    
     return ranked_recipes
