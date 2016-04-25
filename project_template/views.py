@@ -23,14 +23,17 @@ def index(request):
         #find_recipes should be implemented in test.py 
         # make use of inverted index 
         output_list = find_recipes(ingredients,similar_recipes)
-        paginator = Paginator(output_list, 10)
-        page = request.GET.get('page')
-        try:
-            output = paginator.page(page)
-        except PageNotAnInteger:
-            output = paginator.page(1)
-        except EmptyPage:
-            output = paginator.page(paginator.num_pages)
+        if len(output_list) == 0:
+            output = "None"
+        else:
+            paginator = Paginator(output_list, 10)
+            page = request.GET.get('page')
+            try:
+                output = paginator.page(page)
+            except PageNotAnInteger:
+                output = paginator.page(1)
+            except EmptyPage:
+                output = paginator.page(paginator.num_pages)
     return render_to_response('project_template/index.html', 
                           {'output': output,
                            'magic_url': request.get_full_path(),

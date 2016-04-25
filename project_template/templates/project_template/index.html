@@ -47,28 +47,32 @@
 
         <div id='output' class="form-inline global-search" style="display:none;">
             <h3>Output</h3><br>
-            {% for line in output %}
-                <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a><br>
-                <p>Have: {{line.match}}</p><br>
-                <p>Need: {{line.diff}}</p><br>
-            {% endfor %}
+            {% if output == "None" %}
+                <p>No Matched Recipes :(</p><br>
+            {% else %}
+                {% for line in output %}
+                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a><br>
+                    <p>Have: {{line.match}}</p><br>
+                    <p>Need: {{line.diff}}</p><br>
+                {% endfor %}
             
-            <div class="pagination">
-                <span class="step-links">
-                    {% if output.has_previous %}
-                    <a href= "{{magic_url}}&page={{ output.previous_page_number }}">previous</a>
-                    {% endif %}
-                    
-                    <!-- Showing the page numbers in Html Page -->
-                    <span class="current">
-                    Page {{ output.number }} of {{ output.paginator.num_pages }}
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if output.has_previous %}
+                        <a href= "{{magic_url}}&page={{ output.previous_page_number }}">previous</a>
+                        {% endif %}
+                        
+                        <!-- Showing the page numbers in Html Page -->
+                        <span class="current">
+                        Page {{ output.number }} of {{ output.paginator.num_pages }}
+                        </span>
+                        
+                        {% if output.has_next %}
+                        <a id ='step_links' href= "{{magic_url}}&page={{ output.next_page_number }}">next</a>
+                        {% endif %}
                     </span>
-                    
-                    {% if output.has_next %}
-                    <a id ='step_links' href= "{{magic_url}}&page={{ output.next_page_number }}">next</a>
-                    {% endif %}
-                </span>
-            </div>
+                </div>
+            {% endif %}
         </div>
     </body>
 </html>
