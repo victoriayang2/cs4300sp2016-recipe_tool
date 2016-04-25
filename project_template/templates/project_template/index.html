@@ -8,6 +8,19 @@
         function showDiv() {
             localStorage.setItem('show', 'true'); //store state in localStorage
         }
+
+        function findSimilar(ings){            
+            var inglist = ings.slice(1,-1).split(",");            
+            var count = 0;
+            for(count = 0; count < inglist.length; count++){
+                inglist[count]=inglist[count].trim().slice(2,-1);
+            } 
+
+            document.getElementById('input').value = inglist; 
+            document.getElementById('search').click();      
+
+        }
+
         window.onload = function() {
             var show = localStorage.getItem('show');
             if(show === 'true'){
@@ -34,7 +47,7 @@
                 <div class="form-group">
                     <input id="input" type="text" name="ingredients" class="form-control" placeholder="Your Ingredient List (comma separated)">
                 </div>
-                <button onclick="showDiv();"  type="submit" class="btn btn-info"> GO! </button>
+                <button id="search" onclick="showDiv();"  type="submit" class="btn btn-info"> GO! </button>
             </form>
         </div>
 
@@ -50,10 +63,14 @@
                 <h4>No Matched Recipes :(</h4><br>
             {% else %}
                 <h3>Recipes</h3><br>
-                {% for line in output %}
+                {% for line in output %}  
+                    <script>
+                    </script>                 
                     <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a><br>
                     <p>Have: {{line.match}}</p><br>
-                    <p>Need: {{line.diff}}</p><br>
+                    <p>Need: {{line.diff}}</p><br>                                       
+                    <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.ing}}"> 
+                        Find Similar Recipe!</button> <br/>
                 {% endfor %}
             
                 <div class="pagination">

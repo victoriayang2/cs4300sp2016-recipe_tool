@@ -65,6 +65,14 @@ body {
 	border: none
 }
 
+.btn-similar{
+	background:none;
+	color:#41E044;
+    border:none;
+    margin:0;
+    padding:0;	
+}
+
 #output {
 	color: #ffffff;
 	background-color: rgba(227,184,143,.3);
