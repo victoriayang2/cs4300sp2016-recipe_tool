@@ -36,7 +36,8 @@ def find_similar(q,transcripts):
 
 def find_recipes(i,r=''):
     # takes string of ingredients and/or recipes
-    ranked_recipes = index_search(i, inverted_index, idf, norms, recipes)
+    ranked_recipes = index_search(i, n_ing, ing_by_rec, idf, ing_to_index, norm, recipes)
+    #ranked_recipes = index_search(i, inverted_index, idf, norms, recipes)
 
     # use both or have different modules to see which one is better
     # return the resultant recipe list json that should be parsed
