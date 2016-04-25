@@ -46,10 +46,10 @@
         {% endif %}
 
         <div id='output' class="form-inline global-search" style="display:none;">
-            <h3>Output</h3><br>
             {% if output == "None" %}
-                <p>No Matched Recipes :(</p><br>
+                <h4>No Matched Recipes :(</h4><br>
             {% else %}
+                <h3>Recipes</h3><br>
                 {% for line in output %}
                     <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a><br>
                     <p>Have: {{line.match}}</p><br>

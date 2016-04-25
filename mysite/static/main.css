@@ -81,7 +81,7 @@ body {
 	padding-top: 20px;
 }
 
-#output h3 {
+#output h3, h4 {
 	color: #99cc33;
 	padding-bottom: 5px;
 	font-size: 30px;
