@@ -1,9 +1,7 @@
-from __future__ import print_function
 import numpy as np
 from scipy import sparse, io
 import json
 import glob
-import math
 import pickle
 from collections import defaultdict
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -69,48 +67,6 @@ n_ing = len(ing_to_index)
 
 # with open("./recipes.pickle", "wb") as f:
 #     pickle.dump(recipes, f)
-
-# # Dictionary of recipe name to recipe ingredients
-# recipe_ingredients = {}
-# # List of all ingredients
-# all_ingredients = []
-
-# for recipe in recipes:
-#     recipe_ingredients[recipe['name']] = recipe['ing']
-#     all_ingredients += recipe['ing']
-
-# # Remove duplicates and sort ingredients to get indices
-# all_ingredients = sorted(set(all_ingredients))
-
-# id_to_name = {}
-
-
-# #inverted index of ingredient to doc IDs
-# inverted_index = defaultdict(list)
-# for i, rec in enumerate(recipes):
-#     for ing in rec['ing']:
-#         inverted_index[ing].append(i)
-            
-# idf = {}
-# for ing in inverted_index.keys():
-#     num_docs = len(inverted_index[ing])
-#     idf[ing] = math.log(len(recipes)/float(1+num_docs),2)
-    
-# norms = np.zeros(len(recipes))
-# for ing in inverted_index:
-#     ing_idf = idf[ing]
-#     for doc in inverted_index[ing]:
-#         norms[doc] += ing_idf**2
-# norms = np.sqrt(norms)
-
-# with open('./project_template/inverted_index.pickle','rb') as f:
-#     inverted_index = pickle.load(f)
-# with open('./project_template/idf.pickle','rb') as f:
-#     idf = pickle.load(f)
-# with open('./project_template/norms.pickle','rb') as f:
-#     norms = pickle.load(f)
-# with open('./project_template/recipes.pickle','rb') as f:
-#     recipes = pickle.load(f)
 
 #performs a search based on cosine similarity
 def index_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
