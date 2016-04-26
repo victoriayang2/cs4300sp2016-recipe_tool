@@ -22,9 +22,9 @@ body {
 	background-color: rgba(227,184,143,.3);
 	border-radius: 30px;
 	padding: 10px;
-	margin-top: 40px;
-	margin-left: 350px;
-	margin-right: 350px;
+	margin-top: 4%;
+	margin-left:20%;
+	margin-right:20%;
 }
 
 #form h1{
@@ -39,11 +39,11 @@ body {
 
 .global-search {
 	text-align:center;
-	padding:10px;
+	padding:10px;	
 }
 
 .global-search .form-control {
-	width:500px;
+	width:99.99%;
 }
 
 .global-search * {
@@ -78,9 +78,9 @@ body {
 	background-color: rgba(227,184,143,.3);
 	border-radius: 30px;
 	padding: 10px;
-	margin-top: 40px;
-	margin-left: 350px;
-	margin-right: 350px;
+	margin-top: 4%;
+	margin-left: 20%;
+	margin-right:20%;
 }
 
 #r_links{
