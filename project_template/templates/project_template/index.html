@@ -63,10 +63,13 @@
                 <h4>No Matched Recipes :(</h4><br>
             {% else %}
                 <h3>Recipes</h3><br>
-                {% for line in output %}  
-                    <script>
-                    </script>                 
-                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a><br>
+                {% for line in output %} 
+                    {% if line.diff == "None" or line.diff == "" %}                                    
+                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}&#10025</a>
+                    {% else %}
+                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a>
+                    {% endif %}                       
+                    <br>
                     <p>Have: {{line.match}}</p><br>
                     <p>Need: {{line.diff}}</p><br>                                       
                     <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.ing}}"> 
@@ -76,7 +79,7 @@
                 <div class="pagination">
                     <span class="step-links">
                         {% if output.has_previous %}
-                        <a href= "{{magic_url}}&page={{ output.previous_page_number }}">previous</a>
+                        <a href= "{{magic_url}}&page={{ output.previous_page_number }}">previous</a>                        
                         {% endif %}
                         
                         <!-- Showing the page numbers in Html Page -->
