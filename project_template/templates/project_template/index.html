@@ -64,8 +64,8 @@
             {% else %}
                 <h3>Recipes</h3><br>
                 {% for line in output %} 
-                    {% if line.diff == "None" or line.diff == "" %}                                    
-                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}&#10025</a>
+                    {% if line.diff == "None" or line.diff == "" %}
+                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">&#10025&#10025{{line.name}}&#10025&#10025</a>
                     {% else %}
                     <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a>
                     {% endif %}                       
