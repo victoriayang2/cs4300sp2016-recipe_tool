@@ -8,6 +8,10 @@ from .test import find_recipes
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
+def final(request):
+    return HttpResponse('<h3>Under Construction</h3>')
+
+
 def index(request):
     output_list = ''
     output=''

@@ -1,0 +1,97 @@
+@media (min-width: 1200px) {
+.container {
+    max-width: 970px;
+}
+}
+@media (min-width:400px){
+.global-search {
+padding: 20px 0;
+text-align:center;
+}
+
+/*Image obtained from Pixabay*/
+body {
+	padding-top: 15%;
+	padding-bottom: 15px;
+	background: url('/static/background.jpg') no-repeat center center fixed; 
+    background-size: cover;
+    margin: 0;
+}
+
+#form {
+	background-color: rgba(227,184,143,.3);
+	border-radius: 30px;
+	padding: 10px;
+	margin-top: 4%;
+	margin-left:20%;
+	margin-right:20%;
+}
+
+#form h1{
+	font-size: 60px; 
+	color: #99cc33;
+	font-family: 'Signika', sans-serif;
+}
+
+#logo {
+	color: #cc6802;
+}
+
+.global-search {
+	text-align:center;
+	padding:10px;	
+}
+
+.global-search .form-control {
+	width:99.99%;
+}
+
+.global-search * {
+	display:inline-block;
+	margin-bottom:0;
+}
+
+}
+.topcorner{
+	position:absolute;
+	top:2%;
+	right:2%;
+	color: #feefd7;
+	text-align: right;
+}
+
+.btn-info{
+	background-color: #79831a;
+	border: none
+}
+
+.btn-similar{
+	background:none;
+	color:#41E044;
+    border:none;
+    margin:0;
+    padding:0;	
+}
+
+#output {
+	color: #ffffff;
+	background-color: rgba(227,184,143,.3);
+	border-radius: 30px;
+	padding: 10px;
+	margin-top: 4%;
+	margin-left: 20%;
+	margin-right:20%;
+}
+
+#r_links{
+	color: #ffffff;
+	font-size: 17px;
+	padding-top: 20px;
+}
+
+#output h3, h4 {
+	color: #99cc33;
+	padding-bottom: 5px;
+	font-size: 30px;
+	font-family: 'Signika', sans-serif;
+}
