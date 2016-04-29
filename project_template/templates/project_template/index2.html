@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/main.css">
+        <link href='https://fonts.googleapis.com/css?family=Signika' rel='stylesheet' type='text/css'>
+    </head>
+    <script>
+        function showDiv() {
+            localStorage.setItem('show', 'true'); //store state in localStorage
+        }
+
+        function findSimilar(ings){            
+            var inglist = ings.slice(1,-1).split(",");            
+            var count = 0;
+            for(count = 0; count < inglist.length; count++){
+                inglist[count]=inglist[count].trim().slice(2,-1);
+            } 
+
+            document.getElementById('input').value = inglist; 
+            document.getElementById('search').click();      
+
+        }
+
+        window.onload = function() {
+            var show = localStorage.getItem('show');
+            if(show === 'true'){
+                 document.getElementById('output').style.display = "block";
+            }
+        }
+    </script>
+    
+    <body>
+        <!-- TODO: Please change lines 10 and 11 according to your actual project name and student names-->
+        <div class="topcorner">
+            <p>
+                Recipe Recommender <br>
+                Victoria Yang (vzy2) | Daniel Douvris (dpd63) | Sahana Vijaykumar (sv387) | Prava Samad (pts54)
+            </p>
+        </div>
+        
+        <div id='form'>
+            <form class="form-inline global-search" method='GET'>
+                <h1> Sharp<font id='logo'>chef</font></h1>
+                
+                <br><br>
+                
+                <div class="form-group">
+                    <input id="input" type="text" name="ingredients" class="form-control" placeholder="Your Ingredient List (comma separated)">
+                </div>
+                <button id="search" onclick="showDiv();"  type="submit" class="btn btn-info"> GO! </button>
+            </form>
+        </div>
+
+        {% if output == "" %}
+        <script>
+            localStorage.setItem('show', 'false');
+            document.getElementById('output').style.display = "none";
+        </script>
+        {% endif %}
+
+        <div id='output' class="form-inline global-search" style="display:none;">
+            {% if output == "None" %}
+                <h4>No Matched Recipes :(</h4><br>
+            {% else %}
+                <h3>Recipes</h3><br>
+                {% for line in output %} 
+                    {% if line.diff == "None" or line.diff == "" %}
+                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">&#10025&#10025{{line.name}}&#10025&#10025</a>
+                    {% else %}
+                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a>
+                    {% endif %}                       
+                    <br>
+                    <p>Have: {{line.match}}</p><br>
+                    <p>Need: {{line.diff}}</p><br>                                       
+                    <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.ing}}"> 
+                        Find Similar Recipe!</button> <br/>
+                {% endfor %}
+            
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if output.has_previous %}
+                        <a href= "{{magic_url}}&page={{ output.previous_page_number }}">previous</a>                        
+                        {% endif %}
+                        
+                        <!-- Showing the page numbers in Html Page -->
+                        <span class="current">
+                        Page {{ output.number }} of {{ output.paginator.num_pages }}
+                        </span>
+                        
+                        {% if output.has_next %}
+                        <a id ='step_links' href= "{{magic_url}}&page={{ output.next_page_number }}">next</a>
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
+        </div>
+    </body>
+</html>
