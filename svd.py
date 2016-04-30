@@ -15,26 +15,44 @@ def closest_ings(ing_in, k = 10):
     asort = np.argsort(-sims)[:k+1]
     return [(index_to_ing[i],sims[i]/sims[asort[0]]) for i in asort[1:]]
 
-
+# All recipes, sans reviews
 recipes = []
+# All recipes, with only reviews and tips
+docs = []
 
 path = 'jsons/parsed*.json'
 files=glob.glob(path)
 for file in files:
     with open(file) as f:
         for line in f:
-            r = json.loads(line)
-            r.pop('reviews', None)
-            recipes.append(r)
+            rec = json.loads(line)
+            revs = rec.pop('reviews', []])
+            tips = rec.pop('tips', []])
+            docs.append({
+            	'name': rec['name']
+            	'reviews': revs,
+            	'tips': tips
+            	})
+            recipes.append(rec)
 
 # Sort recipes by name
 recipes.sort(key=lambda r:r['name'])
+# Sort docs by recipe name
+docs.sort(key=lambda d:d['name'])
 # List of ingredient list for each recipe
 all_ings = [",".join(rec['ing']) for rec in recipes]
+# List of all tips
+all_tips = []
+# List of all reviews
+all_reviews = []
+for d in docs:
+	all_tips += d['tips']
+	all_reviews += [rev['text'] for rev in d['reviews']]
 # Create recipe vectors
 vectorizer = TfidfVectorizer(binary=True)
 rec_by_ing = vectorizer.fit_transform(all_ings)
 ing_by_rec = sparse.csr_matrix.transpose(rec_by_ing)
+
 
 # Decompose ingredient_by_recipe matrix
 # u, s, v_trans = sparse.linalg.svds(ing_by_rec, k=100)
