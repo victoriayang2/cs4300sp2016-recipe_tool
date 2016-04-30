@@ -3,7 +3,12 @@ from scipy import sparse, io
 import pickle
 from collections import defaultdict
 import Levenshtein
+from nltk.stem.wordnet import *
 
+# Lemmatizer
+wnl = WordNetLemmatizer()
+
+# Ingredient Rows x Recipe Columns
 ing_by_rec = io.mmread("data/ing_by_rec.mtx").tocsr().toarray()
 
 with open("data/idf.npy", "rb") as f:
@@ -76,14 +81,14 @@ def index_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
         return results
 
 
-# Index search to use in final app that accounts for match score
-def index_search2(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
+# Search to use in final app that accounts for match score
+def final_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
     if query == "":
         return []
     else:
         results = defaultdict(float)
         q_vec = np.zeros([n_ing])
-        query_toks = [q.strip() for q in query.split(",")]
+        query_toks = [" ".join([wnl.lemmatize(w) for w in q.split(" ")]) for q in query.split(",")]
         query_set = set(query_toks)
         
         # Construct query vector
