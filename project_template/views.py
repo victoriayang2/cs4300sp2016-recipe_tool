@@ -34,7 +34,7 @@ def final(request):
                 output = paginator.page(1)
             except EmptyPage:
                 output = paginator.page(paginator.num_pages)
-    return render_to_response('project_template/index2.html', 
+    return render_to_response('project_template/final.html', 
                           {'output': output,
                            'magic_url': request.get_full_path(),
                            })

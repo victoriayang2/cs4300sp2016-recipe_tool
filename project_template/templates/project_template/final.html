@@ -54,7 +54,10 @@
         {% if output == "" %}
         <script>
             localStorage.setItem('show', 'false');
-            document.getElementById('output').style.display = "none";
+            out = document.getElementById('output')
+            if (out != null) {
+                out.style.display = "none";
+            }
         </script>
         {% endif %}
 
@@ -71,9 +74,10 @@
                     {% endif %}                       
                     <br>
                     <p>Have: {{line.match}}</p><br>
-                    <p>Need: {{line.diff}}</p><br>                                       
+                    <p>Need: {{line.diff}}</p><br>
+                    <p>Rating: {{line.rating}} - </p>
                     <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.ing}}"> 
-                        Find Similar Recipe!</button> <br/>
+                        Find Similar?</button> <br/>
                 {% endfor %}
             
                 <div class="pagination">
