@@ -6,8 +6,9 @@ import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import sys
 from nltk.tokenize import TreebankWordTokenizer
-%matplotlib inline
+
 
 recipes = []
 path = 'jsons/parsed*.json'   
@@ -54,25 +55,62 @@ def recipe_comp(name1, name2):
     coefficients.append(len(inter_ing)/float(len(union_ing)+1))
     return coefficients     
 
-def recipe_sim(a,b,c,recipes):
-    """
-    Input: 
-    a: the weight for same title coefficient
-    b: the weight for shared verbs coefficient
-    c: the weight for shared ingredients coefficient
-    a + b + c must equal 1
-    Returns: a recipe-by-recipe similarity matrix
-    """
-    recipe_sims = np.empty([len(recipes), len(recipes)], dtype = np.float32)
-    if a + b + c != 1:
-        return None
+def title_sim(recipes):
+    title_sims = np.empty([len(recipes), len(recipes)], dtype = np.float32)
     for i in range(len(recipes)):
-        for j in range(len(recipes)):
+        for j in range(i, len(recipes)):
             if i == j:
-                recipe_sims[i][j] == 1
+                title_sims[i][j] = 1
+                title_sims[j][i] = 1
             else:
                 name1 = recipe_index_to_name[i]
                 name2 = recipe_index_to_name[j]
                 coeff = recipe_comp(name1, name2)
-                recipe_sims[i][j] = a*coeff[0] + b*coeff[1] + c*coeff[2]
-    return recipe_sims                 
+                title_sims[i][j] = coeff[0]
+                title_sims[j][i] = coeff[0]
+    return title_sims 
+
+def verb_sim(recipes):
+    verb_sims = np.empty([len(recipes), len(recipes)], dtype = np.float32)
+    for i in range(len(recipes)):
+        for j in range(i, len(recipes)):
+            if i == j:
+                verb_sims[i][j] = 1
+                verb_sims[j][i] = 1
+            else:
+                name1 = recipe_index_to_name[i]
+                name2 = recipe_index_to_name[j]
+                coeff = recipe_comp(name1, name2)
+                verb_sims[i][j] = coeff[1]
+                verb_sims[j][i] = coeff[1]
+    return verb_sims
+
+def ing_sim(recipes):
+    ing_sims = np.empty([len(recipes), len(recipes)], dtype = np.float32)
+    for i in range(len(recipes)):
+        for j in range(i, len(recipes)):
+            if i == j:
+                ing_sims[i][j] = 1
+                ing_sims[j][i] = 1
+            else:
+                name1 = recipe_index_to_name[i]
+                name2 = recipe_index_to_name[j]
+                coeff = recipe_comp(name1, name2)
+                ing_sims[i][j] = coeff[2]
+                ing_sims[j][i] = coeff[2]
+    return ing_sims
+
+if __name__ == "__main__":
+	t = open('title_sim.npy', 'w')
+	np.save(t,title_sim(recipes))
+	t.close()
+	v = open('verb_sim.npy', 'w')
+	np.save(v,verb_sim(recipes))
+	v.close()
+	i = open('ing_sim.npy', 'w')
+	np.save(i,ing_sim(recipes))
+	i.close()
+
+
+
+
