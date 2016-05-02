@@ -11,26 +11,73 @@ text-align:center;
 
 /*Image obtained from Pixabay*/
 body {
-	padding-top: 15%;
-	padding-bottom: 15px;
+	padding-top: 1%;
+	padding-bottom: 1%;
 	background: url('/static/background.jpg') no-repeat center center fixed; 
     background-size: cover;
     margin: 0;
 }
 
-#form {
+.col-md-5 {
+	
+}
+
+
+
+.row {
 	background-color: rgba(227,184,143,.3);
 	border-radius: 30px;
 	padding: 10px;
-	margin-top: 4%;
-	margin-left:20%;
-	margin-right:20%;
+	margin-top: 7%;
+	margin-left:35%;
+	margin-right:35%;
 }
 
-#form h1{
+.row h1{
 	font-size: 60px; 
 	color: #99cc33;
 	font-family: 'Signika', sans-serif;
+	text-align: center;
+}
+
+#header {
+
+}
+
+#header h1 {
+	font-size: 60px; 
+	color: #99cc33;
+	font-family: 'Signika', sans-serif;
+	text-align: center;
+}
+
+#form {
+	background-color: rgba(227,184,143,.5);
+	border-radius: 30px;
+	padding: 10px;
+	margin-top: 11%;
+	margin-left:26%;
+	margin-right:15%;
+	height: 55vh;
+	position: relative;
+	overflow-y: scroll;
+}
+
+#form h3{
+	font-size: 30px; 
+	color: #99cc33;
+	font-family: 'Signika', sans-serif;
+	text-align: center;
+}
+
+ul#all-ings p {
+  display: inline;
+}
+
+ul#all-ings button {
+    margin-left: 10px;
+    background: none;
+    color: red;
 }
 
 #logo {
@@ -62,7 +109,9 @@ body {
 
 .btn-info{
 	background-color: #79831a;
-	border: none
+	border: none;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .btn-similar{
@@ -76,11 +125,14 @@ body {
 #output {
 	color: #ffffff;
 	background-color: rgba(227,184,143,.3);
-	border-radius: 30px;
+	border-radius: 15px;
 	padding: 10px;
-	margin-top: 4%;
-	margin-left: 20%;
-	margin-right:20%;
+	margin-top: 7%;
+	margin-left: 5%;
+	margin-right:26%;
+	height: 80vh;
+	position: relative;
+	overflow-y: scroll;
 }
 
 #r_links{

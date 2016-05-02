@@ -11,21 +11,21 @@ start = time.time()
 wnl = WordNetLemmatizer()
 
 # Ingredient Rows x Recipe Columns
-ing_by_rec = io.mmread("data/ing_by_rec.mtx").tocsr().toarray()
+ing_by_rec = io.mmread("data/ing_by_rec_final.mtx").tocsr().toarray()
 
 # Ingredient Rows x Ingredient Columns
 ing_coccur = io.mmread("data/ing_cooccur.mtx").tocsr().toarray()
 
-with open("data/idf.npy", "rb") as f:
+with open("data/idf_final.npy", "r") as f:
     idf = np.load(f)
 
-with open("data/ing_to_index.pickle", "r") as f:
+with open("data/ing_to_index_final.pickle", "r") as f:
     ing_to_index = pickle.load(f)
 
 with open("data/recipes.pickle", "r") as f:
     recipes = pickle.load(f)
 
-with open("data/norm.npy", "rb") as f:
+with open("data/norm_final.npy", "r") as f:
     norm = np.load(f)
 
 with open("data/ratings.npy", "r") as f:
@@ -33,6 +33,9 @@ with open("data/ratings.npy", "r") as f:
 
 with open("data/times.npy", "r") as f:
     times = np.load(f)
+
+with open("data/rec_svd_normalized.npy", "r") as f:
+    rec_svd = np.load(f)
 
 n_ings = len(ing_to_index)
 
@@ -95,7 +98,7 @@ def index_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
 
 
 # Search to use in final app that accounts for match score
-def final_search(query):
+def final_search(query, rush):
     if query == "":
         return []
     else:
@@ -152,9 +155,15 @@ def final_search(query):
         #     match_ings = len([ing for ing in query_set if ing in r['ing']])
         #     match_scores.append(match_ings/total_ings)
         # match_scores = np.array(match_scores)
-        
+
+        # SVD similarity scores given specified recipe
+        #svd_scores = rec_svd.dot(rec_svd[rec_index_in,:])
+
         # Weighted average of our different scores calculated here
-        combined_scores = .7*scores + .2*match_scores + .05*times + .05*ratings
+        if rush:
+            combined_scores = .7*scores + .2*match_scores + .05*times + .05*ratings
+        else:
+            combined_scores = .7*scores + .2*match_scores + .1*ratings
         ### Debug
         print "Combine Score Calc: {}".format(time.time() - start)
         ###

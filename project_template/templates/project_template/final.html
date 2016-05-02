@@ -3,10 +3,14 @@
         <link rel="stylesheet" href="/static/bootstrap.min.css">
         <link rel="stylesheet" href="/static/main.css">
         <link href='https://fonts.googleapis.com/css?family=Signika' rel='stylesheet' type='text/css'>
+        <script type="text/javascript" src="/static/jquery-1.12.3.min.js"></script>
     </head>
     <script>
         function showDiv() {
             localStorage.setItem('show', 'true'); //store state in localStorage
+            var all_ings = $('input#ingredients').val();
+            localStorage.setItem('ingredients', all_ings);
+            localStorage.setItem('rush', $('#rush').is(':checked'));
         }
 
         function findSimilar(ings){            
@@ -26,29 +30,83 @@
             if(show === 'true'){
                  document.getElementById('output').style.display = "block";
             }
+            var all_ings = localStorage.getItem('ingredients');
+            if (all_ings != null && all_ings != "") {
+                $.each(all_ings.split(","), addIng);
+                $('input#ingredients').val(all_ings);
+            }
+            if (localStorage.getItem('rush')) {
+                $('#rush').attr("checked", "checked");
+            }
         }
+
+        function removeIng(elm) {
+            $(elm).parent().remove()
+            var ings = $('ul#all-ings li').map(function(i,n) {
+                                                    return $(n).children().eq(0).text();
+                                                }).get().join(',');
+            $('input#ingredients').val(ings);
+        }
+
+        function addIngs() {
+            var ings = $('#input').val().split(",");
+            console.log(ings);
+            if (ings.length > 0) {
+                $.each(ings, addIng);
+                var ings = $('ul#all-ings li').map(function(i,n) {
+                                                        return $(n).children().eq(0).text();
+                                                    }).get().join(',');
+                $('input#ingredients').val(ings);
+                $('#input').val("");
+            }
+        }
+
+        function addIng(index, ing) {
+            var text = '<p>' + ing.trim() + '</p>' + '<button class="btn btn-info" onclick="removeIng(this);">x</button>';
+            $('<li />', {html: text}).appendTo('ul#all-ings');
+        }
+
+        function toggle() {
+            if ($('#rush').is(':checked')) {
+                $('#rush').removeAttr('checked');
+            }
+        }
+
     </script>
     
     <body>
-        <!-- TODO: Please change lines 10 and 11 according to your actual project name and student names-->
         <div class="topcorner">
             <p>
                 Recipe Recommender <br>
                 Victoria Yang (vzy2) | Daniel Douvris (dpd63) | Sahana Vijaykumar (sv387) | Prava Samad (pts54)
             </p>
         </div>
-        
-        <div id='form'>
-            <form class="form-inline global-search" method='GET'>
-                <h1> Sharp<font id='logo'>chef</font></h1>
-                
-                <br><br>
-                
-                <div class="form-group">
-                    <input id="input" type="text" name="ingredients" class="form-control" placeholder="Your Ingredient List (comma separated)">
-                </div>
-                <button id="search" onclick="showDiv();"  type="submit" class="btn btn-info"> GO! </button>
-            </form>
+
+        <div class="col-md-5">
+            <div id="header">
+                <h1> Sharp<font id='logo'>chef</font> </h1>
+            </div>
+            <div id='form'>
+                <form class="form-inline global-search" method='GET'>
+                    <h3>Add your ingredients!</h3>
+                    <br><br>
+                    <div class="form-group">
+                        <input id="input" type="text" class="form-control" placeholder="Your Ingredient List (comma separated)">
+                        <input id="ingredients" name="ingredients" type="text" style="display:none;">
+                    </div>
+                    <button id="add" onclick="addIngs();" type="button" class="btn btn-info"> Add </button>
+                    <br>
+                    <div class="form-group">
+                        <p>In a rush? </p>
+                        <input id="rush" name="rush" type="radio" value="1" onclick"toggle();">
+                    </div>
+                    <br>
+                    <button id="search" onclick="showDiv();" type="submit" class="btn btn-info"> GO! </button>
+                </form>
+                <h3>Your Ingredients: </h3>
+                <ul id="all-ings">
+                </ul>
+            </div>
         </div>
 
         {% if output == "" %}
@@ -61,42 +119,44 @@
         </script>
         {% endif %}
 
-        <div id='output' class="form-inline global-search" style="display:none;">
-            {% if output == "None" %}
-                <h4>No Matched Recipes :(</h4><br>
-            {% else %}
-                <h3>Recipes</h3><br>
-                {% for line in output %} 
-                    {% if line.diff == "None" or line.diff == "" %}
-                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">&#10025&#10025{{line.name}}&#10025&#10025</a>
-                    {% else %}
-                    <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a>
-                    {% endif %}                       
-                    <br>
-                    <p>Have: {{line.match}}</p><br>
-                    <p>Need: {{line.diff}}</p><br>
-                    <p>Rating: {{line.rating}} - </p>
-                    <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.ing}}"> 
-                        Find Similar?</button> <br/>
-                {% endfor %}
-            
-                <div class="pagination">
-                    <span class="step-links">
-                        {% if output.has_previous %}
-                        <a href= "{{magic_url}}&page={{ output.previous_page_number }}">previous</a>                        
-                        {% endif %}
-                        
-                        <!-- Showing the page numbers in Html Page -->
-                        <span class="current">
-                        Page {{ output.number }} of {{ output.paginator.num_pages }}
+        <div class="col-md-7">
+            <div id='output' class="form-inline global-search" style="display:none;">
+                {% if output == "None" %}
+                    <h4>No Matched Recipes :(</h4><br>
+                {% else %}
+                    <h3>Recipes</h3><br>
+                    {% for line in output %} 
+                        {% if line.diff == "None" or line.diff == "" %}
+                        <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">&#10025&#10025{{line.name}}&#10025&#10025</a>
+                        {% else %}
+                        <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a>
+                        {% endif %}                       
+                        <br>
+                        <p>Have: {{line.match}}</p><br>
+                        <p>Need: {{line.diff}}</p><br>
+                        <p>Rating: {{line.rating}} - </p>
+                        <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.ing}}"> 
+                            Find Similar?</button> <br/>
+                    {% endfor %}
+                
+                    <div class="pagination">
+                        <span class="step-links">
+                            {% if output.has_previous %}
+                            <a href= "{{magic_url}}&page={{ output.previous_page_number }}">previous</a>                        
+                            {% endif %}
+                            
+                            <!-- Showing the page numbers in Html Page -->
+                            <span class="current">
+                            Page {{ output.number }} of {{ output.paginator.num_pages }}
+                            </span>
+                            
+                            {% if output.has_next %}
+                            <a id ='step_links' href= "{{magic_url}}&page={{ output.next_page_number }}">next</a>
+                            {% endif %}
                         </span>
-                        
-                        {% if output.has_next %}
-                        <a id ='step_links' href= "{{magic_url}}&page={{ output.next_page_number }}">next</a>
-                        {% endif %}
-                    </span>
-                </div>
-            {% endif %}
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </body>
 </html>
