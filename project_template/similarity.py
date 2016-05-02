@@ -37,6 +37,9 @@ with open("data/times.npy", "r") as f:
 with open("data/rec_svd_normalized.npy", "r") as f:
     rec_svd = np.load(f)
 
+with open("data/rev_rec_compressed.npy", "r") as f:
+    rev_by_rec = np.load(f)
+
 n_ings = len(ing_to_index)
 
 print "Setup Time: {}".format(time.time() - start)
@@ -147,6 +150,7 @@ def final_search(query, rush):
         match_counts = np.sum(match_counts, axis=0)
         print "match_counts (summed) shape: {}".format(match_counts.shape)
         # Match score is ratio of matches to total ingredients in recipe
+        # 
         match_scores = match_counts / ing_counts
         print "match_scores shape: {}".format(match_scores.shape)
         # match_scores = []
@@ -161,7 +165,7 @@ def final_search(query, rush):
 
         # Weighted average of our different scores calculated here
         if rush:
-            combined_scores = .7*scores + .2*match_scores + .05*times + .05*ratings
+            combined_scores = .55*scores + .2*match_scores + .2*times + .05*ratings
         else:
             combined_scores = .7*scores + .2*match_scores + .1*ratings
         ### Debug

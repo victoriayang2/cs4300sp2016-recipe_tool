@@ -5,6 +5,8 @@ import numpy as np
 import glob
 import json
 import random
+#import nltk
+#from nltk.stem.wordnet import *
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -13,10 +15,20 @@ def custom_tokenizer(ings):
 	return ings.split(",")
 
 def closest_ings(ing_in, k = 10):
-    if ing_in not in ing_to_index: return [("Not in vocab", 0)]
-    sims = ing_compressed.dot(ing_compressed[ing_to_index[ing_in],:])
-    asort = np.argsort(-sims)[:k+1]
-    return [(index_to_ing[i],sims[i]/sims[asort[0]]) for i in asort[1:]]
+	if ing_in not in ing_to_index: return [("Not in vocab", 0)]
+	sims = ing_compressed.dot(ing_compressed[ing_to_index[ing_in],:])
+	asort = np.argsort(-sims)[:k+1]
+	return [(index_to_ing[i],sims[i]/sims[asort[0]]) for i in asort[1:]]
+
+def closest_recs(rec_index_in, k = 5):
+	sims = rec_compressed.dot(rec_compressed[rec_index_in,:])
+	asort = np.argsort(-sims)[:k+1]
+	return [(recipes[i]['name'],sims[i]/sims[asort[0]]) for i in asort[1:]]
+
+def closest_recs_by_review(rec_index_in, k = 10):
+	sims = rev_rec_compressed.dot(rev_rec_compressed[rec_index_in,:])
+	asort = np.argsort(-sims)[:k+1]
+	return [(recipes[i]['name'],sims[i]/sims[asort[0]], recipes[i]['reviews'][0]['text']) for i in asort[1:]]
 
 def cooccur_ings(ing_in, k=10):
 	if ing_in not in ing_to_index: return [("Not in vocab", 0)]
@@ -58,7 +70,45 @@ all_tips = []
 all_reviews = []
 for d in docs:
 	all_tips += d['tips']
-	all_reviews += [rev['text'] for rev in d['reviews']]
+	all_reviews.append(".".join([rev['text'] for rev in d['reviews']]))
+
+# Create recipe vectors by review text
+# rev_vectorizer = TfidfVectorizer(stop_words='english', min_df=75, max_df=0.7)
+# rec_by_review = rev_vectorizer.fit_transform(all_reviews)
+# review_by_rec = sparse.csr_matrix.transpose(rec_by_review)
+
+# # print review_by_rec.shape #6965, 4693
+
+# # Decompose ingredient_by_recipe matrix
+# rev_words_compressed, _, rev_rec_compressed = sparse.linalg.svds(review_by_rec, k=40)
+# rev_rec_compressed = rev_rec_compressed.transpose()
+
+# # print "Ing: {}".format(ing_compressed.shape)
+# # print "Rec: {}".format(rec_compressed.shape)
+
+# rev_rec_compressed = normalize(rev_rec_compressed, axis = 1)
+with open("./data/rev_rec_compressed.npy", "r") as f:
+	rev_rec_compressed = np.load(f)
+	#np.save(f, rev_rec_compressed)
+'''
+Recipe similarity by review text
+'''
+for i in random.sample(range(len(recipes)), 10):
+    print(recipes[i]['name'])
+    for title, score in closest_recs_by_review(i):
+        print("{}: {:.3f}".format(title[:40].encode("ascii", "ignore"), score))
+    print
+
+# noun_tags = ['NNS', 'NN', 'NNP', 'NNPS']
+
+# verbs = [",".join(rec['verbs']) for rec in recipes]
+# for v in verbs:
+# 	#tag and print nouns
+# 	tokens = v.split(',')
+# 	pos_tags = nltk.pos_tag(tokens)
+# 	for pt in pos_tags:
+# 		if pt[1] in noun_tags:
+# 			print pt[0]
 
 # List of recipe times
 times = np.array([r['time'] for r in recipes])
@@ -87,7 +137,7 @@ popularities /= np.max(popularities)
 ratings *= popularities
 # Normalize by max
 ratings /= np.max(ratings)
-print ratings.shape
+# print ratings.shape
 # with open("./ratings.npy", "w") as f:
 #     np.save(f, ratings)
 
@@ -145,13 +195,7 @@ rec_compressed = normalize(rec_compressed, axis = 1)
 # with open("./data/rec_svd_normalized.npy", "w") as f:
 #     np.save(f, rec_compressed)
 
-def closest_recs(rec_index_in, k = 5):
-    sims = rec_compressed.dot(rec_compressed[rec_index_in,:])
-    print sims.shape
-    asort = np.argsort(-sims)[:k+1]
-    return [(recipes[i]['name'],sims[i]/sims[asort[0]]) for i in asort[1:]]
-
-closest_recs(0)
+# closest_recs(0)
 
 # for i in random.sample(range(len(recipes)), 10):
 #     print(recipes[i]['name'])
