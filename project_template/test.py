@@ -43,3 +43,13 @@ def find_recipes(i,r=''):
     ranked_recipes = index_search(query, n_ing, ing_by_rec, idf, ing_to_index, norm, recipes)
    
     return ranked_recipes
+
+def find_recipes2(i,r=''):
+    # takes string of ingredients and/or recipes
+    try:
+        query = str(i).lower()
+    except UnicodeEncodeError:
+        query = (i.encode('utf8')).lower()
+    ranked_recipes = final_search(query)
+   
+    return ranked_recipes
