@@ -141,6 +141,8 @@ Recipe Similarity
 '''
 
 rec_compressed = normalize(rec_compressed, axis = 1)
+with open("./data/rec_svd_normalized.npy", "w") as f:
+    np.save(f, rec_compressed)
 
 # def closest_recs(rec_index_in, k = 5):
 #     sims = rec_compressed.dot(rec_compressed[rec_index_in,:])
