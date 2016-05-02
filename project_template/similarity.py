@@ -52,7 +52,7 @@ print "Setup Time: {}".format(time.time() - start)
 
 
 def findRecipeIndex(name):
-    if name in  recipe_name_to_index:  
+    if name in recipe_name_to_index:  
         return recipe_name_to_index[name]
     else:
         return ""
@@ -177,6 +177,10 @@ def final_search(query, rush, srName):
                 #set the score of itself to 0.0
                 svd_scores[rec_index_in] = 0.0 
                 print "svd_scores shape: {}".format(svd_scores.shape)
+
+        title_scores = []
+        if srName:
+
 
         # Weighted average of our different scores calculated here
         if rush:

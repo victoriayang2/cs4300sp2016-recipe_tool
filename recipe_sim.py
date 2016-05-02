@@ -24,15 +24,18 @@ def custom_tokenizer(terms):
     return terms.split(",")
 
 n_feats = 5000
-tfidf_vec = TfidfVectorizer(binary=True, norm=None, use_idf=False, smooth_idf=False, tokenizer=custom_tokenizer,
-                            stop_words='english',max_df=0.8, min_df=10, max_features=n_feats)
+tfidf_vec1 = TfidfVectorizer(norm=None, use_idf=False, smooth_idf=False, tokenizer=custom_tokenizer,
+                            max_features=n_feats)
+tfidf_vec2 = TfidfVectorizer(norm=None, use_idf=False, smooth_idf=False, tokenizer=custom_tokenizer,
+                            stop_words='english',max_features=n_feats)
 
 all_verbs = [",".join(rec['verbs']) for rec in recipes]
-recipe_by_verbs = tfidf_vec.fit_transform(all_verbs)
+recipe_by_verbs = tfidf_vec1.fit_transform(all_verbs)
 verbs_by_recipe = sparse.csr_matrix.transpose(recipe_by_verbs)
-all_titles = [",".join(rec['name']) for rec in recipes]
-recipe_by_titles = tfidf_vec.fit_transform(all_titles)
+all_titles = [",".join(tokenizer.tokenize(rec['name'])) for rec in recipes]
+recipe_by_titles = tfidf_vec2.fit_transform(all_titles)
 titles_by_recipe = sparse.csr_matrix.transpose(recipe_by_titles)
+recipe_title_words_by_index = {word:i for i,word in enumerate(tfidf_vec2.get_feature_names())}
 
 
 
