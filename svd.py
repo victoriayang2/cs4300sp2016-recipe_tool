@@ -87,6 +87,7 @@ popularities /= np.max(popularities)
 ratings *= popularities
 # Normalize by max
 ratings /= np.max(ratings)
+print ratings.shape
 # with open("./ratings.npy", "w") as f:
 #     np.save(f, ratings)
 
@@ -141,13 +142,16 @@ Recipe Similarity
 '''
 
 rec_compressed = normalize(rec_compressed, axis = 1)
-with open("./data/rec_svd_normalized.npy", "w") as f:
-    np.save(f, rec_compressed)
+# with open("./data/rec_svd_normalized.npy", "w") as f:
+#     np.save(f, rec_compressed)
 
-# def closest_recs(rec_index_in, k = 5):
-#     sims = rec_compressed.dot(rec_compressed[rec_index_in,:])
-#     asort = np.argsort(-sims)[:k+1]
-#     return [(recipes[i]['name'],sims[i]/sims[asort[0]]) for i in asort[1:]]
+def closest_recs(rec_index_in, k = 5):
+    sims = rec_compressed.dot(rec_compressed[rec_index_in,:])
+    print sims.shape
+    asort = np.argsort(-sims)[:k+1]
+    return [(recipes[i]['name'],sims[i]/sims[asort[0]]) for i in asort[1:]]
+
+closest_recs(0)
 
 # for i in random.sample(range(len(recipes)), 10):
 #     print(recipes[i]['name'])
