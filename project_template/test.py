@@ -4,7 +4,6 @@ import Levenshtein
 import json
 from .similarity import *
 
-
 def read_file(n):
     path = Chunks.objects.get(id = n).address;
     file = open(path)
@@ -40,16 +39,21 @@ def find_recipes(i,r=''):
         query = str(i).lower()
     except UnicodeEncodeError:
         query = (i.encode('utf8')).lower()
-    ranked_recipes = index_search(query, n_ing, ing_by_rec, idf, ing_to_index, norm, recipes)
+    ranked_recipes = index_search(query, n_ings, ing_by_rec, idf, ing_to_index, norm, recipes)
    
     return ranked_recipes
 
-def find_recipes2(i, rush):
+def find_recipes2(i, rush, srName=''):
     # takes string of ingredients and/or recipes
     try:
+        squery = ""
         query = str(i).lower()
+        if srName:
+            squery = str(srName)            
     except UnicodeEncodeError:
         query = (i.encode('utf8')).lower()
-    ranked_recipes = final_search(query, rush)
+        if srName:
+            squery = (srName.encode('utf8'))
+    ranked_recipes = final_search(query, rush,srName)
    
     return ranked_recipes
