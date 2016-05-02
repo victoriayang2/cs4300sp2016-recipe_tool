@@ -13,59 +13,67 @@ def custom_tokenizer(ings):
         by_space += ing.split(' ')
     return by_space + by_comma
 
-# recipes = []
+def space_tokenizer(ings):
+    return ings.split(',')
 
-# path = 'jsons/parsed*.json'
-# files=glob.glob(path)
-# for file in files:
-#     with open(file) as f:
-#         for line in f:
-#             r = json.loads(line)
-#             r.pop('reviews', None)
-#             recipes.append(r)
+recipes = []
 
-# # Sort recipes by name
-# recipes.sort(key=lambda r:r['name'])
-# # List of ingredient list for each recipe
-# all_ings = [",".join(rec['ing']) for rec in recipes]
-# # Create recipe vectors
-# tfidf_vec = TfidfVectorizer(binary=True, norm='l2', tokenizer=custom_tokenizer)
-# rec_by_ing = tfidf_vec.fit_transform(all_ings)
-# ing_by_rec = sparse.csr_matrix.transpose(rec_by_ing)
-# idf = tfidf_vec.idf_
-# n_rec, n_ing = rec_by_ing.shape
+path = 'jsons/parsed*.json'
+files=glob.glob(path)
+for file in files:
+    with open(file) as f:
+        for line in f:
+            r = json.loads(line)
+            r.pop('reviews', None)
+            recipes.append(r)
+
+# Sort recipes by name
+recipes.sort(key=lambda r:r['name'])
+# List of ingredient list for each recipe
+all_recs = [",".join(rec['ing']) for rec in recipes]
+# Create recipe vectors
+tfidf_vec = TfidfVectorizer(binary=True, norm='l2', tokenizer=space_tokenizer)
+rec_by_ing = tfidf_vec.fit_transform(all_recs)
+ing_by_rec = sparse.csr_matrix.transpose(rec_by_ing)
+idf = tfidf_vec.idf_
+n_rec, n_ing = rec_by_ing.shape
 # ing_to_index = {v:i for i, v in enumerate(tfidf_vec.get_feature_names())}
+ing_to_index = tfidf_vec.vocabulary_
+all_ings = ing_to_index.keys()
 
-ing_by_rec = io.mmread("./ing_by_rec.mtx").tocsr().toarray()
+# ing_by_rec = io.mmread("./ing_by_rec.mtx").tocsr().toarray()
 
-with open("./idf.npy", "rb") as f:
-    idf = np.load(f)
+# with open("./idf.npy", "rb") as f:
+#     idf = np.load(f)
 
-with open("./ing_to_index.pickle", "rb") as f:
-    ing_to_index = pickle.load(f)
+# with open("./ing_to_index.pickle", "rb") as f:
+#     ing_to_index = pickle.load(f)
 
-with open("./recipes.pickle", "rb") as f:
-    recipes = pickle.load(f)
+# with open("./recipes.pickle", "rb") as f:
+#     recipes = pickle.load(f)
 
-with open("./norm.npy", "rb") as f:
-    norm = np.load(f)
+# with open("./norm.npy", "rb") as f:
+#     norm = np.load(f)
 
-n_ing = len(ing_to_index)
+# n_ing = len(ing_to_index)
 
-# norm = np.sqrt(rec_by_ing.multiply(rec_by_ing).sum(axis=1)).flatten()
+norm = np.sqrt(rec_by_ing.multiply(rec_by_ing).sum(axis=1)).flatten()
 
-# with open("./norm.npy", "wb") as f:
-#     np.save(f, norm)
+with open("./data/norm_final.npy", "w") as f:
+    np.save(f, norm)
 
-# io.mmwrite("./ing_by_rec.mtx", ing_by_rec)
+io.mmwrite("./data/ing_by_rec_final.mtx", ing_by_rec)
 
-# with open("./idf.npy", "wb") as f:
-#     np.save(f, idf)
+with open("./data/idf_final.npy", "w") as f:
+    np.save(f, idf)
 
-# with open("./ing_to_index.pickle", "wb") as f:
-#     pickle.dump(ing_to_index, f)
+with open("./data/ing_to_index_final.pickle", "w") as f:
+    pickle.dump(ing_to_index, f)
 
-# with open("./recipes.pickle", "wb") as f:
+with open("./data/all_ings_final.json", "w") as f:
+    f.write(json.dumps(all_ings))
+
+# with open("./recipes.pickle", "w") as f:
 #     pickle.dump(recipes, f)
 
 #performs a search based on cosine similarity
@@ -86,7 +94,7 @@ def index_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
         q_vec /= q_norm
         scores = q_vec.dot(ibr)
         denom = q_norm * norm
-        scores /= denom[0]
+        scores = np.atleast_2d(scores) / denom
         #sorting
         order = sorted(enumerate(scores.flat), key=lambda pair:pair[1], reverse=True)
         results = [recipes[o[0]] for o in order if o[1] > 0]
@@ -96,6 +104,6 @@ def index_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
         return results
 
 test_query = "soy sauce,butter"
-test_results = index_search(test_query, n_ing, ing_by_rec, idf, ing_to_index, norm, recipes)
-print(test_results[0]['match'])
+test_results = index_search(test_query, n_ing, ing_by_rec.toarray(), idf, ing_to_index, norm, recipes)
+print(test_results[0]['name'])
 

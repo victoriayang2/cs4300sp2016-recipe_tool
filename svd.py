@@ -140,7 +140,8 @@ ing_compressed = normalize(ing_compressed, axis = 1)
 Recipe Similarity
 '''
 
-# rec_compressed = normalize(rec_compressed, axis = 1)
+rec_compressed = normalize(rec_compressed, axis = 1)
+
 # def closest_recs(rec_index_in, k = 5):
 #     sims = rec_compressed.dot(rec_compressed[rec_index_in,:])
 #     asort = np.argsort(-sims)[:k+1]

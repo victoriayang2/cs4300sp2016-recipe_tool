@@ -19,9 +19,7 @@ body {
 }
 
 .col-md-5 {
-	height: 80vh;
-	position: relative;
-	overflow-y: scroll;
+	
 }
 
 
@@ -42,20 +40,27 @@ body {
 	text-align: center;
 }
 
-#form {
-	background-color: rgba(227,184,143,.5);
-	border-radius: 30px;
-	padding: 10px;
-	margin-top: 10%;
-	margin-left:26%;
-	margin-right:15%;
+#header {
+
 }
 
-#form h1{
+#header h1 {
 	font-size: 60px; 
 	color: #99cc33;
 	font-family: 'Signika', sans-serif;
 	text-align: center;
+}
+
+#form {
+	background-color: rgba(227,184,143,.5);
+	border-radius: 30px;
+	padding: 10px;
+	margin-top: 11%;
+	margin-left:26%;
+	margin-right:15%;
+	height: 55vh;
+	position: relative;
+	overflow-y: scroll;
 }
 
 #form h3{
