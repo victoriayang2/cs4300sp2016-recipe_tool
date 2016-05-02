@@ -14,17 +14,14 @@ body {
 	padding-top: 1%;
 	padding-bottom: 1%;
 	background: url('/static/background.jpg') no-repeat center center fixed; 
-    background-size: cover;
+    background-size: 100% 115%;;
     margin: 0;
 }
 
-h1 {
-	font-size: 60px; 
-	color: #99cc33;
-	font-family: 'Signika', sans-serif;
-	text-align: center;
+.col-md-5 {
+	top:10%;
+	position: relative;
 }
-
 
 .row {
 	background-color: rgba(227,184,143,.3);
@@ -42,15 +39,30 @@ h1 {
 	text-align: center;
 }
 
+#header {
+	position: fixed;
+	left: 2%;
+	top: 2%;
+}
+
+#header h1 {
+	font-size: 60px; 
+	color: #99cc33;
+	font-family: 'Signika', sans-serif;
+	text-align: center;
+}
+
 #form {
-	background-color: rgba(227,184,143,.2);
+	background-color: rgba(227,184,143,.3);
 	border-radius: 30px;
 	padding: 10px;
-	margin-top: 18%;
-	margin-left:20%;
+	margin-top: 6.25%;
+	margin-left:25%;
 	margin-right:15%;
-	height: 35vh;
+	height: 63vh;
 	position: relative;
+	top: 0;
+	bottom: 0;
 }
 
 #form h3{
@@ -58,20 +70,47 @@ h1 {
 	color: #99cc33;
 	font-family: 'Signika', sans-serif;
 	text-align: center;
+	padding-top: 0px;
+}
+
+#inglist {
+	position: relative;
+	height: 40%;
+	width:100%;
+	margin-bottom: 2%;
+	overflow-y: scroll;
+}
+
+#yourings {
+	margin-top: 2%;
+}
+
+#check {
+	background: none;
+	color: green;
+	padding: 2px;
+	margin-right: 7px;
+}
+
+#x {
+	background: none;
+	color: red;
+	padding: 2px;
+	margin-left: 5px;
 }
 
 ul#all-ings p {
   display: inline;
-}
-
-ul#all-ings button {
-    margin-left: 10px;
-    background: none;
-    color: red;
+  color:#ffffff;
+  font-size: 1.2em;
 }
 
 #logo {
 	color: #cc6802;
+}
+
+.form-group p{
+	color:#ffffff;
 }
 
 .global-search {
@@ -91,10 +130,24 @@ ul#all-ings button {
 }
 .topcorner{
 	position:absolute;
-	top:2%;
-	right:2%;
+	bottom:.1%;
+	right:.5%;
 	color: #feefd7;
 	text-align: right;
+}
+
+#add {
+	background-color: #ffffff;
+	border: none;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	color: #000000;
+}
+
+#search {
+	display:block;
+    margin: 0 auto;
+    position: relative;
 }
 
 .btn-info{
@@ -118,8 +171,8 @@ ul#all-ings button {
 	border-radius: 15px;
 	padding: 10px;
 	margin-top: 7%;
-	margin-left: 20%;
-	margin-right:15%;
+	margin-left: 5%;
+	margin-right:26%;
 	height: 80vh;
 	position: relative;
 	overflow-y: scroll;

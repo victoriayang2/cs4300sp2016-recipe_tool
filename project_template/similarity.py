@@ -18,7 +18,7 @@ ing_by_rec = io.mmread("data/ing_by_rec_final.mtx").tocsr().toarray()
 # Ingredient Rows x Ingredient Columns
 ing_coccur = io.mmread("data/ing_cooccur.mtx").tocsr().toarray()
 
-with open("data/idf_final.npy", "r") as f:
+with open("data/idf_final.npy", "rb") as f:
     idf = np.load(f)
 
 with open("data/ing_to_index_final.pickle", "r") as f:
@@ -27,16 +27,16 @@ with open("data/ing_to_index_final.pickle", "r") as f:
 with open("data/recipes.pickle", "r") as f:
     recipes = pickle.load(f)
 
-with open("data/norm_final.npy", "r") as f:
+with open("data/norm_final.npy", "rb") as f:
     norm = np.load(f)
 
-with open("data/ratings.npy", "r") as f:
+with open("data/ratings.npy", "rb") as f:
     ratings = np.load(f)
 
-with open("data/times.npy", "r") as f:
+with open("data/times.npy", "rb") as f:
     times = np.load(f)
 
-with open("data/rec_svd_normalized.npy", "r") as f:
+with open("data/rec_svd_normalized.npy", "rb") as f:
     rec_svd = np.load(f)
 
 n_ings = len(ing_to_index)

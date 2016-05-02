@@ -39,7 +39,7 @@ def find_recipes(i,r=''):
         query = str(i).lower()
     except UnicodeEncodeError:
         query = (i.encode('utf8')).lower()
-    ranked_recipes = index_search(query, n_ing, ing_by_rec, idf, ing_to_index, norm, recipes)
+    ranked_recipes = index_search(query, n_ings, ing_by_rec, idf, ing_to_index, norm, recipes)
    
     return ranked_recipes
 
