@@ -40,7 +40,7 @@ def recipe_comp(name1, name2):
     toks_2 = set([w for w in tokenizer.tokenize(name2) if w not in common_words])
     inter = toks_1.intersection(toks_2)
     union = toks_1.union(toks_2)
-    coefficients.append(len(inter)/float(len(union))+1)
+    coefficients.append(len(inter)/float(len(union)+1))
     #calculating shared verbs coefficient
     verbs1 = set(recipe_index_to_verbs[index1])
     verbs2 = set(recipe_index_to_verbs[index2])
@@ -104,12 +104,12 @@ if __name__ == "__main__":
 	t = open('title_sim.npy', 'w')
 	np.save(t,title_sim(recipes))
 	t.close()
-	v = open('verb_sim.npy', 'w')
-	np.save(v,verb_sim(recipes))
-	v.close()
-	i = open('ing_sim.npy', 'w')
-	np.save(i,ing_sim(recipes))
-	i.close()
+	#v = open('verb_sim.npy', 'w')
+	#np.save(v,verb_sim(recipes))
+	#v.close()
+	#i = open('ing_sim.npy', 'w')
+	#np.save(i,ing_sim(recipes))
+	#i.close()
 
 
 
