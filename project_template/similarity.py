@@ -95,7 +95,7 @@ def index_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
 
 
 # Search to use in final app that accounts for match score
-def final_search(query):
+def final_search(query, rush):
     if query == "":
         return []
     else:
@@ -152,7 +152,7 @@ def final_search(query):
         #     match_ings = len([ing for ing in query_set if ing in r['ing']])
         #     match_scores.append(match_ings/total_ings)
         # match_scores = np.array(match_scores)
-        
+
         # Weighted average of our different scores calculated here
         combined_scores = .7*scores + .2*match_scores + .05*times + .05*ratings
         ### Debug

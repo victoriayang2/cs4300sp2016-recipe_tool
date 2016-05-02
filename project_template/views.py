@@ -13,16 +13,14 @@ def final(request):
     output=''
     ingredients = ''
     similar_recipes = ''
+    rush=False
 
     if request.GET.get('ingredients'):        
         ingredients = request.GET.get('ingredients')
-        print ingredients
-    if request.GET.get('similar_recipe'):
-        similar_recipes = request.GET.get('similar_recipe')
-    if ingredients or similar_recipes:
-        #find_recipes should be implemented in test.py 
-        # make use of inverted index 
-        output_list = find_recipes2(ingredients,similar_recipes)
+    if request.GET.get('rush'):
+        rush = True
+    if ingredients:
+        output_list = find_recipes2(ingredients, rush)
         if len(output_list) == 0:
             output = "None"
         else:

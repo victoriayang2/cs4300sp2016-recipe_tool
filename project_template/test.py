@@ -44,12 +44,12 @@ def find_recipes(i,r=''):
    
     return ranked_recipes
 
-def find_recipes2(i,r=''):
+def find_recipes2(i, rush):
     # takes string of ingredients and/or recipes
     try:
         query = str(i).lower()
     except UnicodeEncodeError:
         query = (i.encode('utf8')).lower()
-    ranked_recipes = final_search(query)
+    ranked_recipes = final_search(query, rush)
    
     return ranked_recipes
