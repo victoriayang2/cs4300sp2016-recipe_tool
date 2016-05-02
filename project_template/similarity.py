@@ -149,12 +149,13 @@ def final_search(query, rush, srName):
         #add match_score to cosine score
         bin_rec_vecs = ing_by_rec.copy()
         bin_rec_vecs[bin_rec_vecs > 0] = 1
-        # Shape: (4693,)
-        ing_counts = np.sum(bin_rec_vecs, axis=0).astype(np.float32)
-        print "ing_counts shape: {}".format(ing_counts.shape)
         # Binary query vector
         q_vec[q_vec > 0] = 1
         print "Qvec shape: {}".format(q_vec.shape)
+        ing_counts = np.atleast_2d(q_vec).transpose() + bin_rec_vecs
+        ing_counts[ing_counts] > 1 = 1
+        ing_counts = np.sum(ing_counts, axis=0).astype(np.float32)
+        print "ing_counts shape: {}".format(ing_counts.shape)
         # Multiply query vector down each recipe column
         match_counts = q_vec.reshape(n_ings,1) * bin_rec_vecs
         print "match_counts (multiply) shape: {}".format(match_counts.shape)
@@ -162,36 +163,29 @@ def final_search(query, rush, srName):
         match_counts = np.sum(match_counts, axis=0)
         print "match_counts (summed) shape: {}".format(match_counts.shape)
         # Match score is ratio of matches to total ingredients in recipe
-        # 
         match_scores = match_counts / ing_counts
         print "match_scores shape: {}".format(match_scores.shape)
-        # match_scores = []
-        # for r in recipes:
-        #     total_ings = len(r['ing'])
-        #     match_ings = len([ing for ing in query_set if ing in r['ing']])
-        #     match_scores.append(match_ings/total_ings)
-        # match_scores = np.array(match_scores)
 
         # SVD similarity scores given specified recipe
         svd_scores=[]
         if srName:
             rec_index_in = findRecipeIndex(srName)
             if rec_index_in:
-                svd_scores = rec_svd.dot(rec_svd[rec_index_in,:])
+                svd_ing = rec_svd.dot(rec_svd[rec_index_in,:])
+                svd_rev = rev_by_rec.dot(rev_by_rec[rec_index_in,:])
+                svd_scores = 0.35 * svd_ing + 0.65 * svd_rev
                 #set the score of itself to 0.0
                 svd_scores[rec_index_in] = 0.0 
-                print "svd_scores shape: {}".format(svd_scores.shape)                        
+                print "svd_scores shape: {}".format(svd_scores.shape)
 
         # Weighted average of our different scores calculated here
         if rush:
             combined_scores = .55*scores + .2*match_scores + .2*times + .05*ratings
         else:
             combined_scores = .7*scores + .2*match_scores + .1*ratings
+        if srName:
+            combined_scores = .5*combined_scores + .5*svd_scores
         ### Debug
-
-        if len(svd_scores) > 0 :
-            combined_scores = .8*combined_scores + .2*svd_scores
-
         print "Combine Score Calc: {}".format(time.time() - start)
         ###
         ### Debug
@@ -207,8 +201,4 @@ def final_search(query, rush, srName):
         print "Sorting: {}".format(time.time() - start)
         ###
         return results
-
-# test = final_search("chicken,onion")[:10]
-# for t in test:
-#     print t['name']
 
