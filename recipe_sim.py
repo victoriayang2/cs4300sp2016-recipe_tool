@@ -17,11 +17,11 @@ for file in files:
         for line in f:
             recipes.append(json.loads(line))
 
-recipe_name_to_index = {name:i for i,name in enumerate(r['name'] for r in recipes)}
-recipe_index_to_name = {i:name for name,i in recipe_name_to_index.iteritems()}
+recipe_index_to_name = {i:name for i,name in enumerate(r['name'] for r in recipes)}
+recipe_name_to_index = {name:i for i,name in recipe_index_to_name.iteritems()}
 recipe_index_to_verbs = {i:verbs for i,verbs in enumerate(r['verbs'] for r in recipes)}
 recipe_index_to_ing = {i:ing for i,ing in enumerate(r['ing'] for r in recipes)}
-tokenizer = TreebankWordTokenizer()         
+tokenizer = TreebankWordTokenizer()       
 
 def recipe_comp(name1, name2):
     """ 
@@ -39,20 +39,20 @@ def recipe_comp(name1, name2):
     toks_2 = set([w for w in tokenizer.tokenize(name2) if w not in common_words])
     inter = toks_1.intersection(toks_2)
     union = toks_1.union(toks_2)
-    coefficients.append(len(inter)/float(len(union)))
+    coefficients.append(len(inter)/float(len(union))+1)
     #calculating shared verbs coefficient
     verbs1 = set(recipe_index_to_verbs[index1])
     verbs2 = set(recipe_index_to_verbs[index2])
     inter_verb = verbs1.intersection(verbs2)
     union_verb = verbs1.union(verbs2)
-    coefficients.append(len(inter_verb)/float(len(union_verb)))
+    coefficients.append(len(inter_verb)/float(len(union_verb)+1))
     #calculating shared ingredients coefficient
     ing1 = set(recipe_index_to_ing[index1])
     ing2 = set(recipe_index_to_ing[index2])
     inter_ing = ing1.intersection(ing2)
     union_ing = ing1.union(ing2)
-    coefficients.append(len(inter_ing)/float(len(union_ing)))
-    return coefficients   
+    coefficients.append(len(inter_ing)/float(len(union_ing)+1))
+    return coefficients     
 
 def recipe_sim(a,b,c,recipes):
     """
@@ -64,6 +64,8 @@ def recipe_sim(a,b,c,recipes):
     Returns: a recipe-by-recipe similarity matrix
     """
     recipe_sims = np.empty([len(recipes), len(recipes)], dtype = np.float32)
+    if a + b + c != 1:
+        return None
     for i in range(len(recipes)):
         for j in range(len(recipes)):
             if i == j:
@@ -73,4 +75,4 @@ def recipe_sim(a,b,c,recipes):
                 name2 = recipe_index_to_name[j]
                 coeff = recipe_comp(name1, name2)
                 recipe_sims[i][j] = a*coeff[0] + b*coeff[1] + c*coeff[2]
-    return recipe_sims                   
+    return recipe_sims                 
