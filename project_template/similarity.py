@@ -5,6 +5,8 @@ from collections import defaultdict
 import Levenshtein
 from nltk.stem.wordnet import *
 import time
+import json
+import glob 
 
 start = time.time()
 # Lemmatizer
@@ -39,8 +41,18 @@ with open("data/rec_svd_normalized.npy", "r") as f:
 
 n_ings = len(ing_to_index)
 
+
+recipe_index_to_name = {i:name for i,name in enumerate(r['name'] for r in recipes)}
+recipe_name_to_index = {name:i for i,name in recipe_index_to_name.iteritems()}
+
 print "Setup Time: {}".format(time.time() - start)
 
+
+def findRecipeIndex(name):
+    if name in  recipe_name_to_index:  
+        return recipe_name_to_index[name]
+    else:
+        return ""
 
 def distanceMeasure(query, msg):
     try:
@@ -98,10 +110,10 @@ def index_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
 
 
 # Search to use in final app that accounts for match score
-def final_search(query, rush):
+def final_search(query, rush, srName):
     if query == "":
         return []
-    else:
+    else:        
         results = defaultdict(float)
         q_vec = np.zeros([n_ings])
         query_toks = [" ".join([wnl.lemmatize(w) for w in q.split(" ")]) for q in query.split(",")]
@@ -157,7 +169,14 @@ def final_search(query, rush):
         # match_scores = np.array(match_scores)
 
         # SVD similarity scores given specified recipe
-        #svd_scores = rec_svd.dot(rec_svd[rec_index_in,:])
+        svd_scores=[]
+        if srName:
+            rec_index_in = findRecipeIndex(srName)
+            if rec_index_in:
+                svd_scores = rec_svd.dot(rec_svd[rec_index_in,:])
+                #set the score of itself to 0.0
+                svd_scores[rec_index_in] = 0.0 
+                print "svd_scores shape: {}".format(svd_scores.shape)                        
 
         # Weighted average of our different scores calculated here
         if rush:
@@ -165,6 +184,10 @@ def final_search(query, rush):
         else:
             combined_scores = .7*scores + .2*match_scores + .1*ratings
         ### Debug
+
+        if len(svd_scores) > 0 :
+            combined_scores = .8*combined_scores + .2*svd_scores
+
         print "Combine Score Calc: {}".format(time.time() - start)
         ###
         ### Debug
@@ -174,15 +197,8 @@ def final_search(query, rush):
         order = sorted(enumerate(combined_scores.flat), key=lambda pair:pair[1], reverse=True)
         results = [recipes[o[0]] for o in order if o[1] > 0]
         for rec in results:
-            matchedIngs = set()
-            recIngList = list(set(rec['ing']))
-            for ing in query_set:
-                matchingIngs = [recipeIng for recipeIng in recIngList if ing in recipeIng.lower()]
-                if len(matchingIngs)>0:
-                    score,toUseIng = findMostSimilar(ing,matchingIngs)[0]
-                    matchedIngs.add(toUseIng)                
-            rec['diff'] = ", ".join(list(set(rec['ing']) - matchedIngs))
-            rec['match'] = ", ".join(list(set(rec['ing']) & matchedIngs))
+            rec['diff'] = ", ".join(list(set(rec['ing']) - query_set))
+            rec['match'] = ", ".join(list(set(rec['ing']) & query_set))        
         ### Debug
         print "Sorting: {}".format(time.time() - start)
         ###

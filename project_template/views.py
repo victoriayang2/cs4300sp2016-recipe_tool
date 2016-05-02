@@ -12,6 +12,7 @@ def final(request):
     output_list = ''
     output=''
     ingredients = ''
+    srName = ''
     similar_recipes = ''
     rush=False
 
@@ -19,8 +20,10 @@ def final(request):
         ingredients = request.GET.get('ingredients')
     if request.GET.get('rush'):
         rush = True
-    if ingredients:
-        output_list = find_recipes2(ingredients, rush)
+    if request.GET.get('srName'):
+        srName = request.GET.get('srName') 
+    if ingredients or srName:
+        output_list = find_recipes2(ingredients, rush, srName)
         if len(output_list) == 0:
             output = "None"
         else:

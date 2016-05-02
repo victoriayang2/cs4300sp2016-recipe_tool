@@ -3,26 +3,21 @@
         <link rel="stylesheet" href="/static/bootstrap.min.css">
         <link rel="stylesheet" href="/static/main.css">
         <link href='https://fonts.googleapis.com/css?family=Signika' rel='stylesheet' type='text/css'>
+        <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
         <script type="text/javascript" src="/static/jquery-1.12.3.min.js"></script>
     </head>
-    <script>
+    <script>    
+
         function showDiv() {
             localStorage.setItem('show', 'true'); //store state in localStorage
-            var all_ings = $('input#ingredients').val();
+            var all_ings = $('input#ingredients').val();            
             localStorage.setItem('ingredients', all_ings);
-            localStorage.setItem('rush', $('#rush').is(':checked'));
+            localStorage.setItem('rush', $('#rush').is(':checked'));            
         }
 
-        function findSimilar(ings){            
-            var inglist = ings.slice(1,-1).split(",");            
-            var count = 0;
-            for(count = 0; count < inglist.length; count++){
-                inglist[count]=inglist[count].trim().slice(2,-1);
-            } 
-
-            document.getElementById('input').value = inglist; 
-            document.getElementById('search').click();      
-
+        function findSimilar(srName){
+            document.getElementById('srName').value = srName;           
+            document.getElementById("search").click();            
         }
 
         window.onload = function() {
@@ -38,6 +33,7 @@
             if (localStorage.getItem('rush')) {
                 $('#rush').attr("checked", "checked");
             }
+
         }
 
         function removeIng(elm) {
@@ -93,6 +89,7 @@
                     <div class="form-group">
                         <input id="input" type="text" class="form-control" placeholder="Your Ingredient List (comma separated)">
                         <input id="ingredients" name="ingredients" type="text" style="display:none;">
+                        <input id="srName" name="srName" type="text" style="display:none;">
                     </div>
                     <button id="add" onclick="addIngs();" type="button" class="btn btn-info"> Add </button>
                     <br>
@@ -126,7 +123,7 @@
                 {% else %}
                     <h3>Recipes</h3><br>
                     {% for line in output %} 
-                        {% if line.diff == "None" or line.diff == "" %}
+                        {% if line.diff == "None" or line.diff == "" %}                        
                         <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">&#10025&#10025{{line.name}}&#10025&#10025</a>
                         {% else %}
                         <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a>
@@ -135,7 +132,7 @@
                         <p>Have: {{line.match}}</p><br>
                         <p>Need: {{line.diff}}</p><br>
                         <p>Rating: {{line.rating}} - </p>
-                        <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.ing}}"> 
+                        <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.name}}"> 
                             Find Similar?</button> <br/>
                     {% endfor %}
                 
@@ -160,3 +157,4 @@
         </div>
     </body>
 </html>
+
