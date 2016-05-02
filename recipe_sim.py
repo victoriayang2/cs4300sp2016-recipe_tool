@@ -9,7 +9,6 @@ import math
 import sys
 from scipy import sparse, io
 from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.tokenize import TreebankWordTokenizer
 
 
 recipes = []
@@ -20,11 +19,6 @@ for file in files:
         for line in f:
             recipes.append(json.loads(line))
 
-recipe_index_to_name = {i:name for i,name in enumerate(r['name'] for r in recipes)}
-recipe_name_to_index = {name:i for i,name in recipe_index_to_name.iteritems()}
-recipe_index_to_verbs = {i:verbs for i,verbs in enumerate(r['verbs'] for r in recipes)}
-recipe_index_to_ing = {i:ing for i,ing in enumerate(r['ing'] for r in recipes)}
-tokenizer = TreebankWordTokenizer()
 
 def custom_tokenizer(terms):
     return terms.split(",")
