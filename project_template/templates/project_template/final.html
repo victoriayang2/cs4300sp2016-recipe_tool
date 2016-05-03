@@ -9,8 +9,8 @@
 
         function showDiv() {
             localStorage.setItem('show', 'true'); //store state in localStorage
-            var all_ings = $('input#ingredients').val();      
             var reqIngs = $('input#').val(); 
+            var all_ings = $('input#ingredients').val();
             localStorage.setItem('ingredients', all_ings);
             var checked = $('#rush').is(':checked');
             localStorage.setItem('rush', checked);
@@ -43,6 +43,8 @@
                                                     return $(n).children().eq(0).text();
                                                 }).get().join(',');
             $('input#ingredients').val(ings);
+            localStorage.setItem('ingredients', ings);
+
         }
 
         function addIngs() {
@@ -53,9 +55,11 @@
                 var ings = $('ul#all-ings li').map(function(i,n) {
                                                         return $(n).children().eq(0).text();
                                                     }).get().join(',');
-                $('input#ingredients').val(ings);
+                $('input#ingredients').val($('input#ingredients').val() + ings);
                 $('#input').val("");
             }
+            var all_ings = $('input#ingredients').val();
+            localStorage.setItem('ingredients', all_ings);
         }
 
         function addIng(index, ing) {
