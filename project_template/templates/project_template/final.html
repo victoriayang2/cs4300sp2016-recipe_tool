@@ -5,8 +5,20 @@
         <link href='https://fonts.googleapis.com/css?family=Signika' rel='stylesheet' type='text/css'>
         <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
         <script type="text/javascript" src="/static/jquery-1.12.3.min.js"></script>
+        <script type="text/javascript" src="/static/bloodhound.min.js"></script>
+        <script type="text/javascript" src="/static/typeahead.jquery.min.js"></script>
     </head>
     <script>    
+
+        var ingredients = new Bloodhound({
+          datumTokenizer: Bloodhound.tokenizers.nonword,
+          queryTokenizer: Bloodhound.tokenizers.whitespace,
+          prefetch: '../../static/all_ings_final.json'
+        });
+
+        /*var colors = ["red", "blue", "green", "yellow", "brown", "black"];
+ 
+        $('#input').typeahead({source: colors});*/
 
         function showDiv() {
             localStorage.setItem('show', 'true'); //store state in localStorage
@@ -16,8 +28,8 @@
         }
 
         function findSimilar(srName){
-            document.getElementById('srName').value = srName;           
-            document.getElementById("search").click();            
+            document.getElementById('srName').value = srName;
+            document.getElementById("search").click();
         }
 
         window.onload = function() {
@@ -34,6 +46,12 @@
                 $('#rush').attr("checked", "checked");
             }
 
+            // passing in `null` for the `options` arguments will result in the default
+            // options being used
+            $('.typeahead').typeahead(null, {
+              name: 'ingredients',
+              source: ingredients
+            });
         }
 
         function removeIng(elm) {
@@ -87,7 +105,7 @@
                     <h3>Add your ingredients!</h3>
                     <br><br>
                     <div class="form-group">
-                        <input id="input" type="text" class="form-control" placeholder="Your Ingredient List (comma separated)">
+                        <input id="input" type="text" class="form-control typeahead" placeholder="Your Ingredient List (comma separated)">
                         <input id="ingredients" name="ingredients" type="text" style="display:none;">
                         <input id="srName" name="srName" type="text" style="display:none;">
                     </div>
