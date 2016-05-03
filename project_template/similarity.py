@@ -6,7 +6,10 @@ import Levenshtein
 from nltk.stem.wordnet import *
 import time
 import json
-import glob 
+import glob
+
+# Point nltk to local corpus
+nltk.data.path.append('./nltk_data/')
 
 start = time.time()
 # Lemmatizer
