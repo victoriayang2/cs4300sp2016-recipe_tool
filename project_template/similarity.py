@@ -198,11 +198,11 @@ def final_search(query, rush, srName):
 
         # Weighted average of our different scores calculated here
         if rush:
-            combined_scores = .55*scores + .2*match_scores + .2*times + .05*ratings
+            combined_scores = .45*scores + .4*match_scores + .1*times + 0.05*ratings
         else:
-            combined_scores = .7*scores + .2*match_scores + .1*ratings
+            combined_scores = .5*scores + .45*match_scores + 0.05*ratings
         if srName:
-            combined_scores = .4*combined_scores + .3*svd_scores + 0.2*title_scores + 0.1*verb_scores
+            combined_scores = .2*combined_scores + .4*svd_scores + 0.35*title_scores + 0.05*verb_scores
         ### Debug
         print "Combine Score Calc: {}".format(time.time() - start)
         ###

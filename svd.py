@@ -145,7 +145,7 @@ for i in random.sample(range(len(recipes)), 10):
 
 # List of recipe times
 times = np.array([r['time'] for r in recipes])
-times[times < 1] = 1
+times[times < 1] = np.max(times)
 times = np.log(times)
 # print np.max(times) # 0.0
 # print np.min(times) # -9.584
@@ -153,8 +153,8 @@ times = np.log(times)
 times /= np.max(times)
 # Invert because longer time equates to lower ranking
 times *= -1
-# with open("./times.npy", "w") as f:
-#     np.save(f, times)
+with open("./data/times.npy", "w") as f:
+    np.save(f, times)
 
 # List of recipe ratings
 ratings = np.array([r['rating'] for r in recipes])
