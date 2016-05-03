@@ -42,11 +42,9 @@ with open("data/rec_svd_normalized.npy", "rb") as f:
 with open("data/rev_rec_compressed.npy", "r") as f:
     rev_by_rec = np.load(f)
 
-with open("data/recipe_by_verbs.npy", "r") as f:
-    recipe_by_verbs = np.load(f)
+recipe_by_titles = io.mmread("data/recipe_by_titles.mtx").tocsr().toarray()
 
-with open("data/recipe_by_titles.npy", "r") as f:
-    recipe_by_titles = np.load(f)
+recipe_by_verbs = io.mmread("data/recipe_by_verbs.mtx").tocsr().toarray()
 
 with open("./data/title_words_by_index.json", "r") as f:
     title_words_by_index = np.load(f)
@@ -191,12 +189,12 @@ def final_search(query, rush, srName):
                 #set the score of itself to 0.0
                 svd_scores[rec_index_in] = 0.0 
                 print "svd_scores shape: {}".format(svd_scores.shape)
-                #calculating title score  
-                title_scores[rec_index_in] = 0.0 
-                title_scores = recipe_by_titles.dot(recipe_by_titles[rec_index_in,:])               
-                #calculating verb score
-                verb_scores[rec_index_in] = 0.0 
-                verb_scores = recipe_by_verbs.dot(recipe_by_verbs[rec_index_in,:])        
+                #calculating title score                  
+                title_scores = recipe_by_titles.dot(recipe_by_titles[rec_index_in])
+                title_scores[rec_index_in] = 0.0               
+                #calculating verb score               
+                verb_scores = recipe_by_verbs.dot(recipe_by_verbs[rec_index_in]) 
+                verb_scores[rec_index_in] = 0.0        
 
         # Weighted average of our different scores calculated here
         if rush:
