@@ -195,6 +195,7 @@ def final_search(query, rush, srName):
                 title_scores[rec_index_in] = 0.0 
                 title_scores = recipe_by_titles.dot(recipe_by_titles[rec_index_in,:])               
                 #calculating verb score
+                verb_scores[rec_index_in] = 0.0 
                 verb_scores = recipe_by_verbs.dot(recipe_by_verbs[rec_index_in,:])        
 
         # Weighted average of our different scores calculated here
