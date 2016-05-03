@@ -7,14 +7,11 @@ from nltk.stem.wordnet import *
 import time
 import json
 import glob 
-from nltk.tokenize import TreebankWordTokenizer
-from recipe_sim import *
 
 start = time.time()
 # Lemmatizer
 wnl = WordNetLemmatizer()
-# Tokenizer
-tokenizer = TreebankWordTokenizer()
+
 # Ingredient Rows x Recipe Columns
 ing_by_rec = io.mmread("data/ing_by_rec_final.mtx").tocsr().toarray()
 
@@ -168,7 +165,7 @@ def final_search(query, rush, srName):
         q_vec[q_vec > 0] = 1
         print "Qvec shape: {}".format(q_vec.shape)
         ing_counts = np.atleast_2d(q_vec).transpose() + bin_rec_vecs
-        ing_counts[ing_counts] > 1 = 1
+        ing_counts[ing_counts > 1] = 1
         ing_counts = np.sum(ing_counts, axis=0).astype(np.float32)
         print "ing_counts shape: {}".format(ing_counts.shape)
         # Multiply query vector down each recipe column
@@ -199,8 +196,6 @@ def final_search(query, rush, srName):
                 title_scores = recipe_by_titles.dot(recipe_by_titles[rec_index_in,:])               
                 #calculating verb score
                 verb_scores = recipe_by_verbs.dot(recipe_by_verbs[rec_index_in,:])        
-
-
 
         # Weighted average of our different scores calculated here
         if rush:
