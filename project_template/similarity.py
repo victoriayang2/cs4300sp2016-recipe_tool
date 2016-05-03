@@ -5,14 +5,12 @@ from collections import defaultdict
 import Levenshtein
 import nltk
 from nltk.stem.wordnet import *
-import time
 import json
 import glob
 
 # Point nltk to local corpus
 nltk.data.path.append('./nltk_data/')
 
-start = time.time()
 # Lemmatizer
 wnl = WordNetLemmatizer()
 
@@ -20,7 +18,7 @@ wnl = WordNetLemmatizer()
 ing_by_rec = io.mmread("data/ing_by_rec_final.mtx").tocsr().toarray()
 
 # Ingredient Rows x Ingredient Columns
-ing_coccur = io.mmread("data/ing_cooccur.mtx").tocsr().toarray()
+# ing_coccur = io.mmread("data/ing_cooccur.mtx").tocsr().toarray()
 
 with open("data/idf_final.npy", "rb") as f:
     idf = np.load(f)
@@ -50,19 +48,17 @@ recipe_by_titles = io.mmread("data/recipe_by_titles.mtx").tocsr().toarray()
 
 recipe_by_verbs = io.mmread("data/recipe_by_verbs.mtx").tocsr().toarray()
 
-with open("./data/title_words_by_index.json", "r") as f:
-    title_words_by_index = np.load(f)
+# with open("./data/title_words_by_index.json", "r") as f:
+#     title_words_by_index = np.load(f)
 
-with open("./data/verb_words_by_index.json", "r") as f:
-    verb_words_by_index = np.load(f)
+# with open("./data/verb_words_by_index.json", "r") as f:
+#     verb_words_by_index = np.load(f)
 
 n_ings = len(ing_to_index)
 
 
 recipe_index_to_name = {i:name for i,name in enumerate(r['name'] for r in recipes)}
 recipe_name_to_index = {name:i for i,name in recipe_index_to_name.iteritems()}
-
-print "Setup Time: {}".format(time.time() - start)
 
 
 def findRecipeIndex(name):
@@ -138,61 +134,44 @@ def final_search(query, reqIng, rush, srName):
         if not reqIng == "":
             reqIng = [int(i) for i in reqIng.split(",")]
         else:
-            reqIng = [0] * len(query_toks)
-        ### Debug
-        start = time.time()
-        #print()
-        ###
+            reqIng = [1] * len(query_toks)
         query_matches = []
         # Construct query vector
         for i,q in enumerate(query_toks):
-            if q in ing_to_index:
-                q_vec[ing_to_index[q]] = (reqIng[i] + 1) * idf[ing_to_index[q]]
-                query_matches.append(q)
-            else:
-                matchingIngs = [recipeIng for recipeIng in ing_to_index.keys() if q in recipeIng.lower()]
-                if len(matchingIngs)>0:
-                    score,toUseIng = findMostSimilar(q,matchingIngs)[0]
-                    query_matches.append(toUseIng)
-                    q_vec[ing_to_index[toUseIng]] = (reqIng[i] + 1) * idf[ing_to_index[toUseIng]]    
+            if reqIng[i] == 1:
+                if q in ing_to_index:
+                    q_vec[ing_to_index[q]] = idf[ing_to_index[q]]
+                    query_matches.append(q)
+                else:
+                    matchingIngs = [recipeIng for recipeIng in ing_to_index.keys() if q in recipeIng.lower()]
+                    if len(matchingIngs)>0:
+                        score,toUseIng = findMostSimilar(q,matchingIngs)[0]
+                        query_matches.append(toUseIng)
+                        q_vec[ing_to_index[toUseIng]] = idf[ing_to_index[toUseIng]]
+                # for m in matchingIngs:
+                #     query_matches.append(m)
+                #     q_vec[ing_to_index[m]] = idf[ing_to_index[m]]
         query_set = set(query_matches)
-        ### Debug
-        print "Qvec Time: {}".format(time.time() - start)
-        ###
-        ### Debug
-        start = time.time()
-        ###
         # Normalize query vector with l2 norm
         q_norm = (q_vec * q_vec).sum()**0.5
         q_vec /= q_norm
         scores = q_vec.dot(ing_by_rec)
         denom = q_norm * norm
         scores /= denom[0]
-        ### Debug
-        print "Calculate Score Time: {}".format(time.time() - start)
-        ###
-        ### Debug
-        start = time.time()
-        ###
         #add match_score to cosine score
         bin_rec_vecs = ing_by_rec.copy()
         bin_rec_vecs[bin_rec_vecs > 0] = 1
         # Binary query vector
         q_vec[q_vec > 0] = 1
-        print "Qvec shape: {}".format(q_vec.shape)
         ing_counts = np.atleast_2d(q_vec).transpose() + bin_rec_vecs
         ing_counts[ing_counts > 1] = 1
         ing_counts = np.sum(ing_counts, axis=0).astype(np.float32)
-        print "ing_counts shape: {}".format(ing_counts.shape)
         # Multiply query vector down each recipe column
         match_counts = q_vec.reshape(n_ings,1) * bin_rec_vecs
-        print "match_counts (multiply) shape: {}".format(match_counts.shape)
         # Sum along columns to get match count
         match_counts = np.sum(match_counts, axis=0)
-        print "match_counts (summed) shape: {}".format(match_counts.shape)
         # Match score is ratio of matches to total ingredients in recipe
         match_scores = match_counts / ing_counts
-        print "match_scores shape: {}".format(match_scores.shape)
 
         # SVD similarity scores given specified recipe
         svd_scores=[]
@@ -220,20 +199,11 @@ def final_search(query, reqIng, rush, srName):
             combined_scores = .7*scores + .3*match_scores
         if srName:
             combined_scores = .4*combined_scores + .45*svd_scores + 0.05*title_scores + 0.05*verb_scores + 0.05*ratings
-        ### Debug
-        print "Combine Score Calc: {}".format(time.time() - start)
-        ###
-        ### Debug
-        start = time.time()
-        ###
         #sorting
         order = sorted(enumerate(combined_scores.flat), key=lambda pair:pair[1], reverse=True)
         results = [recipes[o[0]] for o in order if o[1] > 0]
         for rec in results:
             rec['diff'] = ", ".join(list(set(rec['ing']) - query_set))
             rec['match'] = ", ".join(list(set(rec['ing']) & query_set))        
-        ### Debug
-        print "Sorting: {}".format(time.time() - start)
-        ###
         return results
 
