@@ -55,7 +55,7 @@
                 var ings = $('ul#all-ings li').map(function(i,n) {
                                                         return $(n).children().eq(0).text();
                                                     }).get().join(',');
-                $('input#ingredients').val($('input#ingredients').val() + ings);
+                $('input#ingredients').val(ings);
                 $('#input').val("");
             }
             var all_ings = $('input#ingredients').val();

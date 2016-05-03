@@ -130,20 +130,23 @@ def final_search(query, rush, srName):
         results = defaultdict(float)
         q_vec = np.zeros([n_ings])
         query_toks = [" ".join([wnl.lemmatize(w) for w in q.split(" ")]) for q in query.split(",")]
-        query_set = set(query_toks)
         ### Debug
         start = time.time()
         #print()
         ###
+        query_matches = []
         # Construct query vector
         for q in query_toks:
             if q in ing_to_index:
                 q_vec[ing_to_index[q]] = idf[ing_to_index[q]]
+                query_matches.append(q)
             else:
                 matchingIngs = [recipeIng for recipeIng in ing_to_index.keys() if q in recipeIng.lower()]
                 if len(matchingIngs)>0:
-                    score,toUseIng = findMostSimilar(q,matchingIngs)[0]                    
-                    q_vec[ing_to_index[toUseIng]] = idf[ing_to_index[toUseIng]]     
+                    score,toUseIng = findMostSimilar(q,matchingIngs)[0]
+                    query_matches.append(toUseIng)
+                    q_vec[ing_to_index[toUseIng]] = idf[ing_to_index[toUseIng]]    
+        query_set = set(query_matches)
         ### Debug
         print "Qvec Time: {}".format(time.time() - start)
         ###
