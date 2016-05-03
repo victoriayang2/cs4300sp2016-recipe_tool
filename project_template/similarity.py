@@ -3,6 +3,7 @@ from scipy import sparse, io
 import pickle
 from collections import defaultdict
 import Levenshtein
+import nltk
 from nltk.stem.wordnet import *
 import time
 import json
