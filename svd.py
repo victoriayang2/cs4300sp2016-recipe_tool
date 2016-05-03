@@ -5,11 +5,27 @@ import numpy as np
 import glob
 import json
 import random
+from scipy.stats import t
+from numpy import average, std
+from math import sqrt
 #import nltk
 #from nltk.stem.wordnet import *
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+
+
+
+# returns confidence interval of mean
+def confIntMean(a, conf=0.95):
+	mean = average(a)
+	t_bounds = t.interval(conf,len(a)-1)
+	stddev = std(a,ddof=1)
+	ci=[mean+critval*stddev/sqrt(len(a)) for critval in t_bounds]
+	return ci
+  	#mean, sem, m = np.mean(a), st.sem(a), st.t.ppf((1+conf)/2.0, len(a)-1)
+  	
 
 def custom_tokenizer(ings):
 	return ings.split(",")
@@ -68,9 +84,26 @@ all_ings = [",".join(rec['ing']) for rec in recipes]
 all_tips = []
 # List of all reviews
 all_reviews = []
+all_ratings = []
 for d in docs:
-	all_tips += d['tips']
+	all_tips += d['tips']	
 	all_reviews.append(".".join([rev['text'] for rev in d['reviews']]))
+	all_ratings.append([rev['rating'] for rev in d['reviews']])
+
+rcis = []
+wrci = []
+for ratingList in all_ratings:
+	ci = confIntMean(ratingList)
+	rcis.append(ci[1]-ci[0])
+
+for rci in rcis:
+	count=0.0
+	for i in rcis:
+		if i>rci:
+			count+=1
+	wrci.append(count/len(rcis))
+
+wrci = np.array(wrci)
 
 # Create recipe vectors by review text
 # rev_vectorizer = TfidfVectorizer(stop_words='english', min_df=75, max_df=0.7)
@@ -125,21 +158,22 @@ with open("./data/times.npy", "w") as f:
 
 # List of recipe ratings
 ratings = np.array([r['rating'] for r in recipes])
-popularities = np.array([r['num_reviews'] for r in recipes])
-popularities[popularities > 5000] = 5000
-popularities[popularities < 50] = 1
-popularities = np.log(popularities)
+#popularities = np.array([r['num_reviews'] for r in recipes])
+#popularities[popularities > 5000] = 5000
+#popularities[popularities < 50] = 1
+#popularities = np.log(popularities)
 #print np.max(popularities) # 8.517
 #print np.min(popularities) # 0.0
 # Scale by max to range from 0 to 1
-popularities /= np.max(popularities)
+#popularities /= np.max(popularities)
 # Use popularity array to weight the ratings
-ratings *= popularities
+#ratings *= popularities
 # Normalize by max
-ratings /= np.max(ratings)
+#ratings /= np.max(ratings)
 # print ratings.shape
-# with open("./ratings.npy", "w") as f:
-#     np.save(f, ratings)
+ratings = np.multiply(ratings,wrci)
+with open("./data/ratings.npy", "w") as f:
+	np.save(f, ratings)
 
 # Create recipe vectors
 vectorizer = TfidfVectorizer(binary=True, norm=None, use_idf=False, smooth_idf=False, tokenizer=custom_tokenizer)
@@ -192,8 +226,8 @@ Recipe Similarity
 '''
 
 rec_compressed = normalize(rec_compressed, axis = 1)
-# with open("./data/rec_svd_normalized.npy", "w") as f:
-#     np.save(f, rec_compressed)
+#with open("./data/rec_svd_normalized.npy", "w") as f:
+ #   np.save(f, rec_compressed)
 
 # closest_recs(0)
 
