@@ -38,11 +38,11 @@ titles_by_recipe = sparse.csr_matrix.transpose(recipe_by_titles)
 title_words_by_index = {word:i for i,word in enumerate(tfidf_vec2.get_feature_names())}
 verb_words_by_index = {verb:i for i,verb in enumerate(tfidf_vec1.get_feature_names())}
 
-with open("./data/verbs_by_recipe.npy", "r") as f1:
-	np.save(f1, verbs_by_recipe)
+with open("./data/recipe_by_verbs.npy", "r") as f1:
+	np.save(f1, recipe_by_verbs)
 
-with open("./data/titles_by_recipe.npy", "r") as f2:
-	np.save(f2, titles_by_recipe)
+with open("./data/recipe_by_titles.npy", "r") as f2:
+	np.save(f2, recipe_by_titles)
 
 with open("./data/title_words_by_index.json", "r") as f3:
 	np.save(f3, title_words_by_index)

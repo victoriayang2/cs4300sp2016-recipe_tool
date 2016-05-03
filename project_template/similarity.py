@@ -45,17 +45,17 @@ with open("data/rec_svd_normalized.npy", "rb") as f:
 with open("data/rev_rec_compressed.npy", "r") as f:
     rev_by_rec = np.load(f)
 
-with open("data/verbs_by_recipe.npy", "r") as f:
-    verbs_by_recipe = np.load(f)
+with open("data/recipe_by_verbs.npy", "r") as f:
+    recipe_by_verbs = np.load(f)
 
-with open("data/titles_by_recipe.npy", "r") as f:
-    titles_by_recipe = np.load(f)
+with open("data/recipe_by_titles.npy", "r") as f:
+    recipe_by_titles = np.load(f)
 
 with open("./data/title_words_by_index.json", "r") as f:
-   title_words_by_index = np.load(f)
+    title_words_by_index = np.load(f)
 
 with open("./data/verb_words_by_index.json", "r") as f:
-   verb_words_by_index = np.load(f)
+    verb_words_by_index = np.load(f)
 
 n_ings = len(ing_to_index)
 
@@ -183,8 +183,8 @@ def final_search(query, rush, srName):
 
         # SVD similarity scores given specified recipe
         svd_scores=[]
-        title_scores=[]
         verb_scores=[]
+        title_scores=[]
         if srName:
             rec_index_in = findRecipeIndex(srName)
             if rec_index_in:
@@ -194,21 +194,13 @@ def final_search(query, rush, srName):
                 #set the score of itself to 0.0
                 svd_scores[rec_index_in] = 0.0 
                 print "svd_scores shape: {}".format(svd_scores.shape)
-                #calculating title score
-                toks = tokenizer.tokenize(srName)
-                for tok in toks:
-                    ind = title_words_by_index[tok]
-                    title_scores = title_scores.dot(titles_by_recipes[ind,:])
-                #normalizing
-                title_scores = title_scores/float(len(toks))
+                #calculating title score  
+                title_scores[rec_index_in] = 0.0 
+                title_scores = recipe_by_titles.dot(recipe_by_titles[rec_index_in,:])               
                 #calculating verb score
-                index = recipe_name_to_index[srName]
-                verbs = recipe[index]['verbs']
-                for verb in verbs:
-                    ind = verb_words_by_index[verb]
-                    verb_scores = verb_scores.dot(verbs_by_recipe[ind,;])
-                #normalizing
-                verb_scores = verb_scores/float(len(verbs))
+                verb_scores = recipe_by_verbs.dot(recipe_by_verbs[rec_index_in,:])        
+
+
 
         # Weighted average of our different scores calculated here
         if rush:
@@ -216,7 +208,7 @@ def final_search(query, rush, srName):
         else:
             combined_scores = .7*scores + .2*match_scores + .1*ratings
         if srName:
-            combined_scores = .5*combined_scores + .5*svd_scores
+            combined_scores = .5*combined_scores + .5*svd_scores + title_scores + verb_scores
         ### Debug
         print "Combine Score Calc: {}".format(time.time() - start)
         ###
