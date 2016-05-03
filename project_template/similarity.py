@@ -208,7 +208,7 @@ def final_search(query, rush, srName):
         else:
             combined_scores = .7*scores + .2*match_scores + .1*ratings
         if srName:
-            combined_scores = .5*combined_scores + .5*svd_scores + title_scores + verb_scores
+            combined_scores = .4*combined_scores + .3*svd_scores + 0.2*title_scores + 0.1*verb_scores
         ### Debug
         print "Combine Score Calc: {}".format(time.time() - start)
         ###
