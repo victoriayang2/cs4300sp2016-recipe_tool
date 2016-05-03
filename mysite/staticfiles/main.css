@@ -11,26 +11,63 @@ text-align:center;
 
 /*Image obtained from Pixabay*/
 body {
-	padding-top: 15%;
-	padding-bottom: 15px;
+	padding-top: 1%;
+	padding-bottom: 1%;
 	background: url('/static/background.jpg') no-repeat center center fixed; 
     background-size: cover;
     margin: 0;
 }
 
-#form {
-	background-color: rgba(227,184,143,.3);
-	border-radius: 30px;
-	padding: 10px;
-	margin-top: 4%;
-	margin-left:20%;
-	margin-right:20%;
-}
-
-#form h1{
+h1 {
 	font-size: 60px; 
 	color: #99cc33;
 	font-family: 'Signika', sans-serif;
+	text-align: center;
+}
+
+
+.row {
+	background-color: rgba(227,184,143,.3);
+	border-radius: 30px;
+	padding: 10px;
+	margin-top: 7%;
+	margin-left:35%;
+	margin-right:35%;
+}
+
+.row h1{
+	font-size: 60px; 
+	color: #99cc33;
+	font-family: 'Signika', sans-serif;
+	text-align: center;
+}
+
+#form {
+	background-color: rgba(227,184,143,.2);
+	border-radius: 30px;
+	padding: 10px;
+	margin-top: 18%;
+	margin-left:20%;
+	margin-right:15%;
+	height: 35vh;
+	position: relative;
+}
+
+#form h3{
+	font-size: 30px; 
+	color: #99cc33;
+	font-family: 'Signika', sans-serif;
+	text-align: center;
+}
+
+ul#all-ings p {
+  display: inline;
+}
+
+ul#all-ings button {
+    margin-left: 10px;
+    background: none;
+    color: red;
 }
 
 #logo {
@@ -62,7 +99,9 @@ body {
 
 .btn-info{
 	background-color: #79831a;
-	border: none
+	border: none;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .btn-similar{
@@ -76,11 +115,14 @@ body {
 #output {
 	color: #ffffff;
 	background-color: rgba(227,184,143,.3);
-	border-radius: 30px;
+	border-radius: 15px;
 	padding: 10px;
-	margin-top: 4%;
+	margin-top: 7%;
 	margin-left: 20%;
-	margin-right:20%;
+	margin-right:15%;
+	height: 80vh;
+	position: relative;
+	overflow-y: scroll;
 }
 
 #r_links{
@@ -94,4 +136,19 @@ body {
 	padding-bottom: 5px;
 	font-size: 30px;
 	font-family: 'Signika', sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow:none;
+    border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 1px 1px 6px #333; 
+    background-color:#ffffff;
 }

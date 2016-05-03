@@ -7,7 +7,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import sys
-from nltk.tokenize import TreebankWordTokenizer
+from scipy import sparse, io
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 recipes = []
@@ -18,98 +19,36 @@ for file in files:
         for line in f:
             recipes.append(json.loads(line))
 
-recipe_index_to_name = {i:name for i,name in enumerate(r['name'] for r in recipes)}
-recipe_name_to_index = {name:i for i,name in recipe_index_to_name.iteritems()}
-recipe_index_to_verbs = {i:verbs for i,verbs in enumerate(r['verbs'] for r in recipes)}
-recipe_index_to_ing = {i:ing for i,ing in enumerate(r['ing'] for r in recipes)}
-tokenizer = TreebankWordTokenizer()       
 
-def recipe_comp(name1, name2):
-    """ 
-    Input: two recipe names
-    Returns: a list of length 3 
-    [same title coefficient, shared verbs (from recipe instructions) coefficient, 
-    shared ingredients coefficient]
-    """   
-    coefficients = []
-    index1 = recipe_name_to_index[name1]
-    index2 = recipe_name_to_index[name2]
-    #calculating title coefficient
-    common_words = ['a', 'and', 'the', 'on', 'with', 'in', 's']
-    toks_1 = set([w for w in tokenizer.tokenize(name1) if w not in common_words])
-    toks_2 = set([w for w in tokenizer.tokenize(name2) if w not in common_words])
-    inter = toks_1.intersection(toks_2)
-    union = toks_1.union(toks_2)
-    coefficients.append(len(inter)/float(len(union)+1))
-    #calculating shared verbs coefficient
-    verbs1 = set(recipe_index_to_verbs[index1])
-    verbs2 = set(recipe_index_to_verbs[index2])
-    inter_verb = verbs1.intersection(verbs2)
-    union_verb = verbs1.union(verbs2)
-    coefficients.append(len(inter_verb)/float(len(union_verb)+1))
-    #calculating shared ingredients coefficient
-    ing1 = set(recipe_index_to_ing[index1])
-    ing2 = set(recipe_index_to_ing[index2])
-    inter_ing = ing1.intersection(ing2)
-    union_ing = ing1.union(ing2)
-    coefficients.append(len(inter_ing)/float(len(union_ing)+1))
-    return coefficients     
+def custom_tokenizer(terms):
+    return terms.split(",")
 
-def title_sim(recipes):
-    title_sims = np.empty([len(recipes), len(recipes)], dtype = np.float32)
-    for i in range(len(recipes)):
-        for j in range(i, len(recipes)):
-            if i == j:
-                title_sims[i][j] = 1
-                title_sims[j][i] = 1
-            else:
-                name1 = recipe_index_to_name[i]
-                name2 = recipe_index_to_name[j]
-                coeff = recipe_comp(name1, name2)
-                title_sims[i][j] = coeff[0]
-                title_sims[j][i] = coeff[0]
-    return title_sims 
+n_feats = 5000
+tfidf_vec1 = TfidfVectorizer(norm='l2', use_idf=False, smooth_idf=False, tokenizer=custom_tokenizer,
+                            max_features=n_feats)
+tfidf_vec2 = TfidfVectorizer(norm='l2', use_idf=False, smooth_idf=False, tokenizer=custom_tokenizer,
+                            stop_words='english',max_features=n_feats)
 
-def verb_sim(recipes):
-    verb_sims = np.empty([len(recipes), len(recipes)], dtype = np.float32)
-    for i in range(len(recipes)):
-        for j in range(i, len(recipes)):
-            if i == j:
-                verb_sims[i][j] = 1
-                verb_sims[j][i] = 1
-            else:
-                name1 = recipe_index_to_name[i]
-                name2 = recipe_index_to_name[j]
-                coeff = recipe_comp(name1, name2)
-                verb_sims[i][j] = coeff[1]
-                verb_sims[j][i] = coeff[1]
-    return verb_sims
+all_verbs = [",".join(rec['verbs']) for rec in recipes]
+recipe_by_verbs = tfidf_vec1.fit_transform(all_verbs)
+verbs_by_recipe = sparse.csr_matrix.transpose(recipe_by_verbs)
+all_titles = [",".join(rec['name'].split(" ")) for rec in recipes]
+recipe_by_titles = tfidf_vec2.fit_transform(all_titles)
+titles_by_recipe = sparse.csr_matrix.transpose(recipe_by_titles)
+title_words_by_index = {word:i for i,word in enumerate(tfidf_vec2.get_feature_names())}
+verb_words_by_index = {verb:i for i,verb in enumerate(tfidf_vec1.get_feature_names())}
 
-def ing_sim(recipes):
-    ing_sims = np.empty([len(recipes), len(recipes)], dtype = np.float32)
-    for i in range(len(recipes)):
-        for j in range(i, len(recipes)):
-            if i == j:
-                ing_sims[i][j] = 1
-                ing_sims[j][i] = 1
-            else:
-                name1 = recipe_index_to_name[i]
-                name2 = recipe_index_to_name[j]
-                coeff = recipe_comp(name1, name2)
-                ing_sims[i][j] = coeff[2]
-                ing_sims[j][i] = coeff[2]
-    return ing_sims
+io.mmwrite("./data/recipe_by_verbs.mtx", recipe_by_verbs)
 
-if __name__ == "__main__":
-	t = open('title_sim.npy', 'w')
-	np.save(t,title_sim(recipes))
-	t.close()
-	#v = open('verb_sim.npy', 'w')
-	#np.save(v,verb_sim(recipes))
-	#v.close()
-	#i = open('ing_sim.npy', 'w')
-	#np.save(i,ing_sim(recipes))
-	#i.close()
+io.mmwrite("./data/recipe_by_titles.mtx", recipe_by_titles)
+
+# with open("./data/title_words_by_index.json", "w") as f3:
+# 	np.save(f3, title_words_by_index)
+
+# with open("./data/verb_words_by_index.json", "w") as f4:
+# 	np.save(f4, verb_words_by_index)
+
+
 
 
 
