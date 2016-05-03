@@ -136,7 +136,7 @@ def final_search(query, reqIng, rush, srName):
         query_toks = [" ".join([wnl.lemmatize(w) for w in q.split(" ")]) for q in query.split(",")]
         # Use the reqIng to double idf score of ingredients
         if not reqIng == "":
-            reqIng = [int(i) for i in reqIng.split(",")]
+            reqIng = [int(i)*3 for i in reqIng.split(",")]
         else:
             reqIng = [0] * len(query_toks)
         ### Debug
