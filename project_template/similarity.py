@@ -123,7 +123,7 @@ def index_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
 
 
 # Search to use in final app that accounts for match score
-def final_search(query, rush, srName):
+def final_search(query, rush, srName):    
     if query == "":
         return []
     else:        
@@ -133,11 +133,17 @@ def final_search(query, rush, srName):
         query_set = set(query_toks)
         ### Debug
         start = time.time()
+        #print()
         ###
         # Construct query vector
         for q in query_toks:
             if q in ing_to_index:
-                q_vec[ing_to_index[q]] = idf[ing_to_index[q]]  
+                q_vec[ing_to_index[q]] = idf[ing_to_index[q]]
+            else:
+                matchingIngs = [recipeIng for recipeIng in ing_to_index.keys() if q in recipeIng.lower()]
+                if len(matchingIngs)>0:
+                    score,toUseIng = findMostSimilar(q,matchingIngs)[0]                    
+                    q_vec[ing_to_index[toUseIng]] = idf[ing_to_index[toUseIng]]     
         ### Debug
         print "Qvec Time: {}".format(time.time() - start)
         ###
