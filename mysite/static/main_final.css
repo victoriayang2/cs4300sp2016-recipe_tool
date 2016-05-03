@@ -150,6 +150,22 @@ ul#all-ings p {
     position: relative;
 }
 
+#search {
+	display:block;
+    margin: 0 auto;
+    position: relative;
+}
+
+#search:hover {
+	background-color: #79831a;
+	border: none;
+}
+
+#search:active {
+	background-color: #79831a;
+	border: none;
+}
+
 .btn-info{
 	background-color: #79831a;
 	border: none;
@@ -201,7 +217,7 @@ ul#all-ings p {
 }
  
 ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
+    border-radius10px;
     -webkit-box-shadow: inset 1px 1px 6px #333; 
     background-color:#ffffff;
 }

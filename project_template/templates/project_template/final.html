@@ -3,14 +3,14 @@
         <link rel="stylesheet" href="/static/bootstrap_final.min.css">
         <link rel="stylesheet" href="/static/main_final.css">
         <link href='https://fonts.googleapis.com/css?family=Signika' rel='stylesheet' type='text/css'>
-        <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
         <script type="text/javascript" src="/static/jquery-1.12.3.min.js"></script>
     </head>
     <script>    
 
         function showDiv() {
             localStorage.setItem('show', 'true'); //store state in localStorage
-            var all_ings = $('input#ingredients').val();            
+            var all_ings = $('input#ingredients').val();      
+            var reqIngs = $('input#').val(); 
             localStorage.setItem('ingredients', all_ings);
             localStorage.setItem('rush', $('#rush').is(':checked'));            
         }
@@ -33,7 +33,6 @@
             if (localStorage.getItem('rush')) {
                 $('#rush').attr("checked", "checked");
             }
-
         }
 
         function removeIng(elm) {
@@ -58,14 +57,20 @@
         }
 
         function addIng(index, ing) {
-            var text = '<p>' + ing.trim() + '</p>' + '<button id="x" class="btn btn-info" title="Click to remove"onclick="removeIng(this);">x</button><button id ="check" class="btn btn-info" title="Click to require" onclick="requireIng(this);">&#10004;</button>';
+            var text = '<p>' + ing.trim() + '</p>' + '<button id="x" class="btn btn-info" title="Click to remove"onclick="removeIng(this);">x</button><input onclick="requireIng()" id="req" name="req" type="checkbox" value="1">';
             $('<li />', {html: text}).appendTo('ul#all-ings');
         }
 
-        function toggle() {
-            if ($('#rush').is(':checked')) {
-                $('#rush').removeAttr('checked');
-            }
+        function requireIng() {
+            var requiredIng = [];
+            $("#all-ings input[type=checkbox]").each(function(){
+                if (this.checked){
+                    requiredIng.push(1);
+                }else{
+                    requiredIng.push(0);
+                }
+            })
+            document.getElementById('reqIng').value = requiredIng;
         }
 
     </script>
@@ -90,12 +95,13 @@
                         <input id="input" type="text" class="form-control" placeholder="Your Ingredient List (comma separated)">
                         <input id="ingredients" name="ingredients" type="text" style="display:none;">
                         <input id="srName" name="srName" type="text" style="display:none;">
+                        <input id="reqIng" name="reqIng" type="text" style="display:none;">
                     </div>
                     <button id="add" onclick="addIngs();" type="button" class="btn btn-info"> + </button>
                     <br>
                     <div class="form-group">
                         <p>In a rush? </p>
-                        <input id="rush" name="rush" type="checkbox" value="1" onclick"toggle();">
+                        <input id="rush" name="rush" type="checkbox" value="1">
                     </div>
                     <br>
                     <h3 id='yourings'>Your Ingredients: </h3>
