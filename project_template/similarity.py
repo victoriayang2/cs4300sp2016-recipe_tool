@@ -153,7 +153,7 @@ def final_search(query, rush, srName):
         q_vec[q_vec > 0] = 1
         print "Qvec shape: {}".format(q_vec.shape)
         ing_counts = np.atleast_2d(q_vec).transpose() + bin_rec_vecs
-        ing_counts[ing_counts] > 1 = 1
+        ing_counts[ing_counts > 1] = 1
         ing_counts = np.sum(ing_counts, axis=0).astype(np.float32)
         print "ing_counts shape: {}".format(ing_counts.shape)
         # Multiply query vector down each recipe column
