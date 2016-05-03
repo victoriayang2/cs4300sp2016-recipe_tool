@@ -5,26 +5,15 @@
         <link href='https://fonts.googleapis.com/css?family=Signika' rel='stylesheet' type='text/css'>
         <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
         <script type="text/javascript" src="/static/jquery-1.12.3.min.js"></script>
-        <script type="text/javascript" src="/static/bloodhound.min.js"></script>
-        <script type="text/javascript" src="/static/typeahead.jquery.min.js"></script>
     </head>
-    <script>    
-
-        var ingredients = new Bloodhound({
-          datumTokenizer: Bloodhound.tokenizers.nonword,
-          queryTokenizer: Bloodhound.tokenizers.whitespace,
-          prefetch: '../../static/all_ings_final.json'
-        });
-
-        /*var colors = ["red", "blue", "green", "yellow", "brown", "black"];
- 
-        $('#input').typeahead({source: colors});*/
+    <script>
 
         function showDiv() {
             localStorage.setItem('show', 'true'); //store state in localStorage
             var all_ings = $('input#ingredients').val();            
             localStorage.setItem('ingredients', all_ings);
-            localStorage.setItem('rush', $('#rush').is(':checked'));            
+            var checked = $('#rush').is(':checked');
+            localStorage.setItem('rush', checked);
         }
 
         function findSimilar(srName){
@@ -42,16 +31,10 @@
                 $.each(all_ings.split(","), addIng);
                 $('input#ingredients').val(all_ings);
             }
-            if (localStorage.getItem('rush')) {
-                $('#rush').attr("checked", "checked");
+            var isChecked = localStorage.getItem('rush');
+            if (isChecked != null) {
+                $('#rush').prop("checked", isChecked);
             }
-
-            // passing in `null` for the `options` arguments will result in the default
-            // options being used
-            $('.typeahead').typeahead(null, {
-              name: 'ingredients',
-              source: ingredients
-            });
         }
 
         function removeIng(elm) {
@@ -78,12 +61,6 @@
         function addIng(index, ing) {
             var text = '<p>' + ing.trim() + '</p>' + '<button id="x" class="btn btn-info" title="Click to remove"onclick="removeIng(this);">x</button><button id ="check" class="btn btn-info" title="Click to require" onclick="requireIng(this);">&#10004;</button>';
             $('<li />', {html: text}).appendTo('ul#all-ings');
-        }
-
-        function toggle() {
-            if ($('#rush').is(':checked')) {
-                $('#rush').removeAttr('checked');
-            }
         }
 
     </script>
@@ -113,7 +90,7 @@
                     <br>
                     <div class="form-group">
                         <p>In a rush? </p>
-                        <input id="rush" name="rush" type="checkbox" value="1" onclick"toggle();">
+                        <input id="rush" name="rush" type="checkbox" value="1">
                     </div>
                     <br>
                     <h3 id='yourings'>Your Ingredients: </h3>

@@ -28,7 +28,7 @@ def closest_recs(rec_index_in, k = 5):
 def closest_recs_by_review(rec_index_in, k = 10):
 	sims = rev_rec_compressed.dot(rev_rec_compressed[rec_index_in,:])
 	asort = np.argsort(-sims)[:k+1]
-	return [(recipes[i]['name'],sims[i]/sims[asort[0]], recipes[i]['reviews'][0]['text']) for i in asort[1:]]
+	return [(recipes[i]['name'],sims[i]/sims[asort[0]]) for i in asort[1:]]
 
 def cooccur_ings(ing_in, k=10):
 	if ing_in not in ing_to_index: return [("Not in vocab", 0)]
@@ -112,7 +112,7 @@ for i in random.sample(range(len(recipes)), 10):
 
 # List of recipe times
 times = np.array([r['time'] for r in recipes])
-times[times < 1] = 1
+times[times < 1] = np.max(times)
 times = np.log(times)
 # print np.max(times) # 0.0
 # print np.min(times) # -9.584
@@ -120,8 +120,8 @@ times = np.log(times)
 times /= np.max(times)
 # Invert because longer time equates to lower ranking
 times *= -1
-# with open("./times.npy", "w") as f:
-#     np.save(f, times)
+with open("./data/times.npy", "w") as f:
+    np.save(f, times)
 
 # List of recipe ratings
 ratings = np.array([r['rating'] for r in recipes])
