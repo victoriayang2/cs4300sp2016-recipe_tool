@@ -171,9 +171,10 @@ ratings = np.array([r['rating'] for r in recipes])
 # Normalize by max
 #ratings /= np.max(ratings)
 # print ratings.shape
-# with open("./ratings.npy", "w") as f:
-#     np.save(f, ratings)
 ratings = np.multiply(ratings,wrci)
+with open("./data/ratings.npy", "w") as f:
+	np.save(f, ratings)
+
 # Create recipe vectors
 vectorizer = TfidfVectorizer(binary=True, norm=None, use_idf=False, smooth_idf=False, tokenizer=custom_tokenizer)
 rec_by_ing = vectorizer.fit_transform(all_ings)
@@ -225,8 +226,8 @@ Recipe Similarity
 '''
 
 rec_compressed = normalize(rec_compressed, axis = 1)
-# with open("./data/rec_svd_normalized.npy", "w") as f:
-#     np.save(f, rec_compressed)
+#with open("./data/rec_svd_normalized.npy", "w") as f:
+ #   np.save(f, rec_compressed)
 
 # closest_recs(0)
 
