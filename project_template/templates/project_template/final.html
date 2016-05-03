@@ -12,8 +12,6 @@
             var reqIngs = $('input#').val(); 
             var all_ings = $('input#ingredients').val();
             localStorage.setItem('ingredients', all_ings);
-            var checked = $('#rush').is(':checked');
-            localStorage.setItem('rush', checked);
         }
 
         function findSimilar(srName){
@@ -31,10 +29,7 @@
                 $.each(all_ings.split(","), addIng);
                 $('input#ingredients').val(all_ings);
             }
-            var isChecked = localStorage.getItem('rush');
-            if (isChecked != null) {
-                $('#rush').prop("checked", isChecked);
-            }
+            $('#rush').prop("checked", false);
         }
 
         function removeIng(elm) {

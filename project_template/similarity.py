@@ -127,29 +127,34 @@ def index_search(query, n_ing, ibr, idf, ing_to_index, norm, recipes):
 
 
 # Search to use in final app that accounts for match score
-def final_search(query, rush, srName):    
+def final_search(query, reqIng, rush, srName):    
     if query == "":
         return []
     else:        
         results = defaultdict(float)
         q_vec = np.zeros([n_ings])
         query_toks = [" ".join([wnl.lemmatize(w) for w in q.split(" ")]) for q in query.split(",")]
+        # Use the reqIng to double idf score of ingredients
+        if not reqIng == "":
+            reqIng = [int(i) for i in reqIng.split(",")]
+        else:
+            reqIng = [0] * len(query_toks)
         ### Debug
         start = time.time()
         #print()
         ###
         query_matches = []
         # Construct query vector
-        for q in query_toks:
+        for i,q in enumerate(query_toks):
             if q in ing_to_index:
-                q_vec[ing_to_index[q]] = idf[ing_to_index[q]]
+                q_vec[ing_to_index[q]] = (reqIng[i] + 1) * idf[ing_to_index[q]]
                 query_matches.append(q)
             else:
                 matchingIngs = [recipeIng for recipeIng in ing_to_index.keys() if q in recipeIng.lower()]
                 if len(matchingIngs)>0:
                     score,toUseIng = findMostSimilar(q,matchingIngs)[0]
                     query_matches.append(toUseIng)
-                    q_vec[ing_to_index[toUseIng]] = idf[ing_to_index[toUseIng]]    
+                    q_vec[ing_to_index[toUseIng]] = (reqIng[i] + 1) * idf[ing_to_index[toUseIng]]    
         query_set = set(query_matches)
         ### Debug
         print "Qvec Time: {}".format(time.time() - start)
@@ -200,8 +205,7 @@ def final_search(query, rush, srName):
                 svd_rev = rev_by_rec.dot(rev_by_rec[rec_index_in,:])
                 svd_scores = 0.35 * svd_ing + 0.65 * svd_rev
                 #set the score of itself to 0.0
-                svd_scores[rec_index_in] = 0.0 
-                print "svd_scores shape: {}".format(svd_scores.shape)
+                svd_scores[rec_index_in] = 0.0
                 #calculating title score                  
                 title_scores = recipe_by_titles.dot(recipe_by_titles[rec_index_in])
                 title_scores[rec_index_in] = 0.0               
@@ -211,11 +215,11 @@ def final_search(query, rush, srName):
 
         # Weighted average of our different scores calculated here
         if rush:
-            combined_scores = .45*scores + .4*match_scores + .1*times + 0.05*ratings
+            combined_scores = .7*scores + .25*match_scores + .05*times
         else:
-            combined_scores = .5*scores + .45*match_scores + 0.05*ratings
+            combined_scores = .7*scores + .3*match_scores
         if srName:
-            combined_scores = .2*combined_scores + .4*svd_scores + 0.35*title_scores + 0.05*verb_scores
+            combined_scores = .4*combined_scores + .45*svd_scores + 0.05*title_scores + 0.05*verb_scores + 0.05*ratings
         ### Debug
         print "Combine Score Calc: {}".format(time.time() - start)
         ###

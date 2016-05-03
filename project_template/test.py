@@ -43,7 +43,7 @@ def find_recipes(i,r=''):
    
     return ranked_recipes
 
-def find_recipes2(i, rush, srName=''):
+def find_recipes2(i, reqIng='', rush=False, srName=''):
     # takes string of ingredients and/or recipes
     try:
         squery = ""
@@ -54,6 +54,6 @@ def find_recipes2(i, rush, srName=''):
         query = (i.encode('utf8')).lower()
         if srName:
             squery = (srName.encode('utf8'))
-    ranked_recipes = final_search(query, rush,srName)
+    ranked_recipes = final_search(query, reqIng, rush, srName)
    
     return ranked_recipes

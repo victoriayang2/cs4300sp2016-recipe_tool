@@ -15,15 +15,18 @@ def final(request):
     srName = ''
     similar_recipes = ''
     rush=False
+    reqIng = ''
 
     if request.GET.get('ingredients'):        
         ingredients = request.GET.get('ingredients')
     if request.GET.get('rush'):
         rush = True
     if request.GET.get('srName'):
-        srName = request.GET.get('srName') 
+        srName = request.GET.get('srName')
+    if request.GET.get('reqIng'):
+        reqIng = request.GET.get('reqIng')
     if ingredients or srName:
-        output_list = find_recipes2(ingredients, rush, srName)
+        output_list = find_recipes2(ingredients, reqIng, rush, srName)
         if len(output_list) == 0:
             output = "None"
         else:
