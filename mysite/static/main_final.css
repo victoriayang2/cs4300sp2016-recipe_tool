@@ -246,3 +246,7 @@ li#output_list:nth-child(odd) {
     -webkit-box-shadow: inset 1px 1px 6px #333; 
     background-color:#ffffff;
 }
+
+.req {
+  font-weight: bold;
+}

@@ -67,20 +67,24 @@
         }
 
         function addIng(index, ing) {
-            var text = '<p>' + ing.trim() + '</p>' + '<button id="x" class="btn btn-info" title="Click to remove"onclick="removeIng(this);">x</button><input onclick="requireIng()" id="req" name="req" type="checkbox" value="1">';
+            var text = '<p title="Click to increase importance"class="ing" onclick="req(this);requireIng();">' + ing.trim() + '</p>' + '<button id="x" class="btn btn-info" title="Click to remove"onclick="removeIng(this);">x</button>';
             $('<li />', {html: text}).appendTo('ul#all-ings');
         }
 
         function requireIng() {
             var requiredIng = [];
-            $("#all-ings input[type=checkbox]").each(function(){
-                if (this.checked){
+            $(".ing").each(function(){
+                if ($(this).hasClass("req")){
                     requiredIng.push(1);
                 }else{
                     requiredIng.push(0);
                 }
             })
             document.getElementById('reqIng').value = requiredIng;
+        }
+
+        function req(elem) {
+            $(elem).toggleClass("req");
         }
 
     </script>
