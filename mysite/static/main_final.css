@@ -199,7 +199,6 @@ ul#all-ings p {
 #r_links{
 	color: #ffffff;
 	font-size: 17px;
-	padding-top: 20px;
 }
 
 #output h3, h4 {
@@ -207,6 +206,30 @@ ul#all-ings p {
 	padding-bottom: 5px;
 	font-size: 30px;
 	font-family: 'Signika', sans-serif;
+}
+
+#output ul {
+	padding: 0px;
+	margin: 0px;
+}
+
+li#output_list {
+	width: 100%;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	background: rgba(47,36,28,.5);
+  	background: -webkit-linear-gradient(left,rgba(48,28,19,0) 0%,rgba(47,36,28,.5) 25%,rgba(47,36,28,.5) 75%,rgba(48,28,19,0) 100%); /*Safari 5.1-6*/
+  	background: -o-linear-gradient(right,rgba(48,28,19,0) 0%,rgba(47,36,28,.5) 25%,rgba(47,36,28,.5) 75%,rgba(48,28,19,0) 100%); /*Opera 11.1-12*/
+  	background: -moz-linear-gradient(right,rgba(48,28,19,0) 0%,rgba(47,36,28,.5) 25%,rgba(47,36,28,.5) 75%,rgba(48,28,19,0) 100%); /*Fx 3.6-15*/
+  	background: linear-gradient(to right, rgba(48,28,19,0) 0%,rgba(47,36,28,.5) 25%,rgba(47,36,28,.5) 75%,rgba(48,28,19,0) 100%); /*Standard*/
+}
+
+li#output_list:nth-child(odd) {
+	background: rgba(33,28,23,.5);
+	background: -webkit-linear-gradient(left,rgba(48,28,19,0) 0%,rgba(33,28,23,.5) 25%,rgba(33,28,23,.5) 75%,rgba(48,28,19,0) 100%); /*Safari 5.1-6*/
+  	background: -o-linear-gradient(right,rgba(48,28,19,0) 0%,rgba(33,28,23,.5) 25%,rgba(33,28,23,.5) 75%,rgba(48,28,19,0) 100%); /*Opera 11.1-12*/
+  	background: -moz-linear-gradient(right,rgba(48,28,19,0) 0%,rgba(33,28,23,.5) 25%,rgba(33,28,23,.5) 75%,rgba(48,28,19,0) 100%); /*Fx 3.6-15*/
+  	background: linear-gradient(to right, rgba(48,28,19,0) 0%,rgba(33,28,23,.5) 25%,rgba(33,28,23,.5) 75%,rgba(48,28,19,0) 100%); /*Standard*/
 }
 
 ::-webkit-scrollbar {

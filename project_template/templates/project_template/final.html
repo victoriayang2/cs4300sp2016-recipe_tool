@@ -20,6 +20,9 @@
         }
 
         window.onload = function() {
+            $("form").bind("keydown", function(e) {
+               if (e.keyCode === 13) return false;
+             });
             var show = localStorage.getItem('show');
             if(show === 'true'){
                  document.getElementById('output').style.display = "block";
@@ -30,6 +33,12 @@
                 $('input#ingredients').val(all_ings);
             }
             $('#rush').prop("checked", false);
+
+            $("#input").keyup(function(event){
+                if(event.keyCode == 13){
+                    $("#add").click();
+                }
+            });
         }
 
         function removeIng(elm) {
@@ -131,24 +140,28 @@
                     <h4>No Matched Recipes :(</h4><br>
                 {% else %}
                     <h3>Recipes</h3><br>
-                    {% for line in output %} 
-                        {% if line.diff == "None" or line.diff == "" %}                        
-                        <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">&#10025&#10025{{line.name}}&#10025&#10025</a>
-                        {% else %}
-                        <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a>
-                        {% endif %}
-                        <p style="color:#41E044;">  ({{line.score|floatformat:3}})</p>
-                        <br>
-                        {% if line.match != "None" or line.match != "" %}
-                        <p>Have: {{line.match}}</p><br>
-                        {% endif %}
-                        {% if line.diff != "None" or line.diff != "" %}
-                        <p>Need: {{line.diff}} </p><br>
-                        {% endif %}
-                        <p>Rating: {{line.rating}} - </p>
-                        <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.name}}"> 
-                            Find Similar?</button> <br/>
-                    {% endfor %}
+                    <ul>
+                        {% for line in output %}
+                            <li id="output_list">
+                                {% if line.diff == "None" or line.diff == "" %}
+                                <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">&#10025&#10025{{line.name}}&#10025&#10025</a>
+                                {% else %}
+                                <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a>
+                                {% endif %}
+                                <p style="color:#41E044;">  ({{line.score|floatformat:3}})</p>
+                                <br>
+                                {% if line.match != "None" or line.match != "" %}
+                                <p>Have: {{line.match}}</p><br>
+                                {% endif %}
+                                {% if line.diff != "None" or line.diff != "" %}
+                                <p>Need: {{line.diff}} </p><br>
+                                {% endif %}
+                                <p>Rating: {{line.rating}} - </p>
+                                <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.name}}"> 
+                                    Find Similar?</button> <br>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 
                     <div class="pagination">
                         <span class="step-links">
