@@ -136,12 +136,15 @@
                         <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">&#10025&#10025{{line.name}}&#10025&#10025</a>
                         {% else %}
                         <a id='r_links' target="_blank" href="http://allrecipes.com/recipe/{{line.code}}/{{line.tag}}">{{line.name}}</a>
-                        {% endif %}                       
+                        {% endif %}
+                        <p style="color:#41E044;">  ({{line.score|floatformat:3}})</p>
                         <br>
+                        {% if line.match != "None" or line.match != "" %}
                         <p>Have: {{line.match}}</p><br>
-                        {% if line.diff == "None" or line.diff != "" %}
+                        {% endif %}
+                        {% if line.diff != "None" or line.diff != "" %}
                         <p>Need: {{line.diff}} </p><br>
-                        {% endif %} 
+                        {% endif %}
                         <p>Rating: {{line.rating}} - </p>
                         <button onclick="findSimilar(this.value);" type="submit" class="btn btn-similar" value="{{line.name}}"> 
                             Find Similar?</button> <br/>
