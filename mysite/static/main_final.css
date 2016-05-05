@@ -105,6 +105,7 @@ ul#all-ings p {
   font-size: 1.2em;
   margin-left: 5px;
   margin-right: 1px;
+  cursor: pointer;
 }
 
 #logo {
@@ -252,7 +253,7 @@ li#output_list:nth-child(odd) {
 }
 
 h5 {
-	color: #cc6802;
+	color: #EFAC68;
 	margin-top: 5px;
 	font-size: 1.3em;
 }
