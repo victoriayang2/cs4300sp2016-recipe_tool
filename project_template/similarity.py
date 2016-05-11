@@ -1,3 +1,4 @@
+from models import Combined, Metadata
 import numpy as np
 from scipy import sparse, io
 import pickle
@@ -7,6 +8,8 @@ import nltk
 from nltk.stem.wordnet import *
 import json
 import glob
+
+# print np.fromstring(Combined.objects.get(recipe = 0).scores)[0]
 
 # Point nltk to local corpus
 nltk.data.path.append('./nltk_data/')
@@ -29,21 +32,21 @@ with open("data/recipes.pickle", "r") as f:
 with open("data/norm_final.npy", "rb") as f:
     norm = np.load(f)
 
-with open("data/ratings.npy", "rb") as f:
-    ratings = np.load(f)
+# with open("data/ratings.npy", "rb") as f:
+#     ratings = np.load(f)
 
-with open("data/times.npy", "rb") as f:
-    times = np.load(f)
+# with open("data/times.npy", "rb") as f:
+#     times = np.load(f)
 
-with open("data/rec_svd_normalized.npy", "rb") as f:
-    rec_svd = np.load(f)
+# with open("data/rec_svd_normalized.npy", "rb") as f:
+#     rec_svd = np.load(f)
 
-with open("data/rev_rec_compressed.npy", "r") as f:
-    rev_by_rec = np.load(f)
+# with open("data/rev_rec_compressed.npy", "r") as f:
+#     rev_by_rec = np.load(f)
 
-recipe_by_titles = io.mmread("data/recipe_by_titles.mtx").tocsr().toarray()
+# recipe_by_titles = io.mmread("data/recipe_by_titles.mtx").tocsr().toarray()
 
-recipe_by_verbs = io.mmread("data/recipe_by_verbs.mtx").tocsr().toarray()
+# recipe_by_verbs = io.mmread("data/recipe_by_verbs.mtx").tocsr().toarray()
 
 n_ings = len(ing_to_index)
 
@@ -175,26 +178,29 @@ def final_search(query, reqIng, rush, srName):
         title_scores=[]
         if srName:
             rec_index_in = findRecipeIndex(srName)
-            if rec_index_in:
-                svd_ing = rec_svd.dot(rec_svd[rec_index_in,:])
-                svd_rev = rev_by_rec.dot(rev_by_rec[rec_index_in,:])
-                svd_scores = 0.35 * svd_ing + 0.65 * svd_rev
-                #set the score of itself to 0.0
-                svd_scores[rec_index_in] = 0.0
-                #calculating title score                  
-                title_scores = recipe_by_titles.dot(recipe_by_titles[rec_index_in])
-                title_scores[rec_index_in] = 0.0               
-                #calculating verb score               
-                verb_scores = recipe_by_verbs.dot(recipe_by_verbs[rec_index_in]) 
-                verb_scores[rec_index_in] = 0.0        
+            # if rec_index_in:
+            #     svd_ing = rec_svd.dot(rec_svd[rec_index_in,:])
+            #     svd_rev = rev_by_rec.dot(rev_by_rec[rec_index_in,:])
+            #     svd_scores = 0.35 * svd_ing + 0.65 * svd_rev
+            #     #set the score of itself to 0.0
+            #     svd_scores[rec_index_in] = 0.0
+            #     #calculating title score                  
+            #     title_scores = recipe_by_titles.dot(recipe_by_titles[rec_index_in])
+            #     title_scores[rec_index_in] = 0.0               
+            #     #calculating verb score               
+            #     verb_scores = recipe_by_verbs.dot(recipe_by_verbs[rec_index_in]) 
+            #     verb_scores[rec_index_in] = 0.0
 
         # Weighted average of our different scores calculated here
+        ratings = np.fromstring(Metadata.objects.get(id = 1).ratings)
         if rush:
+            times = np.fromstring(Metadata.objects.get(id = 1).times)
             combined_scores = .6*scores + .25*match_scores  + .05*ratings + .1*times
         else:
             combined_scores = .7*scores + .25*match_scores + .05*ratings
         if srName:
-            combined_scores = .4*combined_scores + .45*svd_scores + 0.05*title_scores + 0.05*verb_scores
+            # combined_scores = .4*combined_scores + .45*svd_scores + 0.05*title_scores + 0.05*verb_scores
+            combined_scores = .4*combined_scores + np.fromstring(Combined.objects.get(recipe = rec_index_in).scores)
         #sorting
         order = sorted(enumerate(combined_scores.flat), key=lambda pair:pair[1], reverse=True)
         results = [recipes[o[0]] for o in order if o[1] > 0.25]

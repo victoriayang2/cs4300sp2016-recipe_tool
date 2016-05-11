@@ -157,8 +157,8 @@ for rci in rcis:
 wrci = np.array(wrci)
 ratings = np.array([r['rating'] for r in recipes])
 ratings = np.multiply(ratings,wrci) / 5.
-with open("./data/ratings.npy", "w") as f:
-	np.save(f, ratings)
+# with open("./data/ratings.npy", "w") as f:
+# 	np.save(f, ratings)
 
 # # Create recipe vectors by review text
 # # rev_vectorizer = TfidfVectorizer(stop_words='english', min_df=75, max_df=0.7)
