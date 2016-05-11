@@ -1,5 +1,8 @@
 *.DS_Store
 *.pyc
+*.sqlite3
 staticfiles
 .env
-*.sqlite3
+/jsons
+/scrape
+/data/unused
