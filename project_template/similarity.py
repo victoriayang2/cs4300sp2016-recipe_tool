@@ -1,4 +1,4 @@
-from models import Combined, Metadata
+#from models import Combined, Metadata
 import numpy as np
 from scipy import sparse, io
 import pickle
@@ -192,15 +192,16 @@ def final_search(query, reqIng, rush, srName):
             #     verb_scores[rec_index_in] = 0.0
 
         # Weighted average of our different scores calculated here
-        ratings = np.fromstring(Metadata.objects.get(id = 1).ratings)
-        if rush:
-            times = np.fromstring(Metadata.objects.get(id = 1).times)
-            combined_scores = .6*scores + .25*match_scores  + .05*ratings + .1*times
-        else:
-            combined_scores = .7*scores + .25*match_scores + .05*ratings
-        if srName:
-            # combined_scores = .4*combined_scores + .45*svd_scores + 0.05*title_scores + 0.05*verb_scores
-            combined_scores = .4*combined_scores + np.fromstring(Combined.objects.get(recipe = rec_index_in).scores)
+        # ratings = np.fromstring(Metadata.objects.get(id = 1).ratings)
+        # if rush:
+        #     times = np.fromstring(Metadata.objects.get(id = 1).times)
+        #     combined_scores = .6*scores + .25*match_scores  + .05*ratings + .1*times
+        # else:
+        #     combined_scores = .7*scores + .25*match_scores + .05*ratings
+        # if srName:
+        #     # combined_scores = .4*combined_scores + .45*svd_scores + 0.05*title_scores + 0.05*verb_scores
+        #     combined_scores = .4*combined_scores + np.fromstring(Combined.objects.get(recipe = rec_index_in).scores)
+        combined_scores = 0.7*scores + 0.3*match_scores
         #sorting
         order = sorted(enumerate(combined_scores.flat), key=lambda pair:pair[1], reverse=True)
         results = [recipes[o[0]] for o in order if o[1] > 0.25]
