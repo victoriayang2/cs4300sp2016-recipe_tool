@@ -132,31 +132,31 @@ docs.sort(key=lambda d:d['name'])
 # List of ingredient list for each recipe
 all_ings = [",".join(rec['ing']) for rec in recipes]
 # List of all tips
-all_tips = []
-# List of all reviews
-all_reviews = []
-all_ratings = []
-for d in docs:
-	all_tips += d['tips']	
-	all_reviews.append(".".join([rev['text'] for rev in d['reviews']]))
-	all_ratings.append([rev['rating'] for rev in d['reviews']])
+# all_tips = []
+# # List of all reviews
+# all_reviews = []
+# all_ratings = []
+# for d in docs:
+# 	all_tips += d['tips']	
+# 	all_reviews.append(".".join([rev['text'] for rev in d['reviews']]))
+# 	all_ratings.append([rev['rating'] for rev in d['reviews']])
 
-rcis = []
-wrci = []
-for ratingList in all_ratings:
-	ci = confIntMean(ratingList)
-	rcis.append(ci[1]-ci[0])
+# rcis = []
+# wrci = []
+# for ratingList in all_ratings:
+# 	ci = confIntMean(ratingList)
+# 	rcis.append(ci[1]-ci[0])
 
-for rci in rcis:
-	count=0.0
-	for i in rcis:
-		if i>rci:
-			count+=1
-	wrci.append(count/len(rcis))
+# for rci in rcis:
+# 	count=0.0
+# 	for i in rcis:
+# 		if i>rci:
+# 			count+=1
+# 	wrci.append(count/len(rcis))
 
-wrci = np.array(wrci)
-ratings = np.array([r['rating'] for r in recipes])
-ratings = np.multiply(ratings,wrci) / 5.
+# wrci = np.array(wrci)
+# ratings = np.array([r['rating'] for r in recipes])
+# ratings = np.multiply(ratings,wrci) / 5.
 # with open("./data/ratings.npy", "w") as f:
 # 	np.save(f, ratings)
 
@@ -230,13 +230,13 @@ ratings = np.multiply(ratings,wrci) / 5.
 # with open("./data/ratings.npy", "w") as f:
 # 	np.save(f, ratings)
 
-# # Create recipe vectors
-# vectorizer = TfidfVectorizer(binary=True, norm=None, use_idf=False, smooth_idf=False, tokenizer=custom_tokenizer)
-# rec_by_ing = vectorizer.fit_transform(all_ings)
-# ing_by_rec = sparse.csr_matrix.transpose(rec_by_ing)
+# Create recipe vectors
+vectorizer = TfidfVectorizer(binary=True, norm=None, use_idf=False, smooth_idf=False, tokenizer=custom_tokenizer)
+rec_by_ing = vectorizer.fit_transform(all_ings)
+ing_by_rec = sparse.csr_matrix.transpose(rec_by_ing)
 
-# ing_to_index = vectorizer.vocabulary_
-# index_to_ing = {i:t for t,i in ing_to_index.iteritems()}
+ing_to_index = vectorizer.vocabulary_
+index_to_ing = {i:t for t,i in ing_to_index.iteritems()}
 
 # # 1429 x 1429
 # ing_cooccur = ing_by_rec.dot(rec_by_ing)
@@ -258,13 +258,13 @@ ratings = np.multiply(ratings,wrci) / 5.
 # # plt.ylabel("Singular value")
 # # plt.show()
 
-# ing_compressed, _, rec_compressed = sparse.linalg.svds(ing_by_rec, k=40)
-# rec_compressed = rec_compressed.transpose()
+ing_compressed, _, rec_compressed = sparse.linalg.svds(ing_by_rec, k=40)
+rec_compressed = rec_compressed.transpose()
 
-# # print "Ing: {}".format(ing_compressed.shape)
-# # print "Rec: {}".format(rec_compressed.shape)
+# print "Ing: {}".format(ing_compressed.shape)
+# print "Rec: {}".format(rec_compressed.shape)
 
-# ing_compressed = normalize(ing_compressed, axis = 1)
+ing_compressed = normalize(ing_compressed, axis = 1)
 
 # # for ing in closest_ings("pepper"):
 # # 	print ing
