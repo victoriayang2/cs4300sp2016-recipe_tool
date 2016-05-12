@@ -6,7 +6,6 @@ from django.db import models
 
 class Combined(models.Model):
 	id = models.IntegerField(primary_key=True)  # AutoField?
-	recipe = models.IntegerField(db_column='recipe', unique=True)  # Field name made lowercase.
 	scores = models.BinaryField(db_column='scores')  # Field name made lowercase.
 	class Meta:
 		managed = False
