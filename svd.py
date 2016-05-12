@@ -33,7 +33,7 @@ def custom_tokenizer(ings):
 
 def closest_ings(ing_in, k = 10):
 	if ing_in not in ing_to_index: return [("Not in vocab", 0)]
-	sims = ing_compressed.dot(ing_compressed[ing_to_index[ing_in],:])
+	sims = ing_compressed_norm.dot(ing_compressed[ing_to_index[ing_in],:])
 	asort = np.argsort(-sims)[:k+1]
 	return [(index_to_ing[i],sims[i]/sims[asort[0]]) for i in asort[1:]]
 
@@ -258,16 +258,16 @@ index_to_ing = {i:t for t,i in ing_to_index.iteritems()}
 # # plt.ylabel("Singular value")
 # # plt.show()
 
-ing_compressed, _, rec_compressed = sparse.linalg.svds(ing_by_rec, k=40)
+ing_compressed, sv, rec_compressed = sparse.linalg.svds(ing_by_rec, k=40)
 rec_compressed = rec_compressed.transpose()
 
 # print "Ing: {}".format(ing_compressed.shape)
 # print "Rec: {}".format(rec_compressed.shape)
 
-ing_compressed = normalize(ing_compressed, axis = 1)
+ing_compressed_norm = normalize(ing_compressed*np.sqrt(sv), axis = 1)
 
-# # for ing in closest_ings("pepper"):
-# # 	print ing
+for ing in closest_ings("cauliflower"):
+	print ing
 
 # # from sklearn.manifold import TSNE
 # # tsne = TSNE(verbose=1)
