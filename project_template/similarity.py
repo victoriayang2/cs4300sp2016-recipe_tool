@@ -154,7 +154,7 @@ def final_search(query, reqIng, rush, srName):
         verb_scores=[]
         title_scores=[]
         if srName:
-            rec_index_in = findRecipeIndex(srName) + 1
+            rec_index_in = findRecipeIndex(srName)
             svd_score = np.fromstring(Combined.objects.get(id = rec_index_in).scores)
 
         # Weighted average of our different scores calculated here
