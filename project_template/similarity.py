@@ -158,9 +158,9 @@ def final_search(query, reqIng, rush, srName):
             svd_score = np.fromstring(Combined.objects.get(id = rec_index_in).scores)
 
         # Weighted average of our different scores calculated here
-        ratings = np.fromstring(Metadata.objects.get(id = 1).ratings)
+        ratings = np.fromstring(Metadata.objects.get(id =0).ratings)
         if rush:
-            times = np.fromstring(Metadata.objects.get(id = 1).times)
+            times = np.fromstring(Metadata.objects.get(id = 0).times)
             combined_scores = .6*scores + .25*match_scores  + .05*ratings + .1*times
         else:
             combined_scores = .7*scores + .25*match_scores + .05*ratings
